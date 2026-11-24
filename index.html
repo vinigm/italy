@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Viagem Itália 2027</title>
+<style>
+  :root {
+    --bg: #faf8f5; --card: #ffffff; --ink: #1f2430; --muted: #6b7280;
+    --line: #e7e2da; --accent: #b4442b; --accent-soft: #f6e3de; --ok: #2f7d4f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #16181d; --card: #1f232b; --ink: #eceef2; --muted: #9aa1ad;
+      --line: #2e333d; --accent: #e8836b; --accent-soft: #3a2621; --ok: #6cc28c;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { padding: 24px 16px 8px; max-width: 820px; margin: 0 auto; }
+  header h1 { margin: 0; font-size: 1.5rem; }
+  header p { margin: 4px 0 0; color: var(--muted); font-size: .9rem; }
+  nav { max-width: 820px; margin: 12px auto 0; padding: 0 16px; display: flex; gap: 4px;
+    overflow-x: auto; border-bottom: 1px solid var(--line); }
+  nav button { background: none; border: 0; padding: 10px 14px; font: inherit; color: var(--muted);
+    cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
+  nav button[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+  main { max-width: 820px; margin: 0 auto; padding: 20px 16px 48px; }
+  section[hidden] { display: none; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 28px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .card .label { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
+  .card .big { font-size: 1.7rem; font-weight: 700; margin: 4px 0; }
+  .card .sub { color: var(--muted); font-size: .85rem; }
+  h2 { font-size: 1.1rem; margin: 0 0 12px; }
+  .day { display: grid; grid-template-columns: 56px 92px 1fr; gap: 12px; align-items: baseline;
+    padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .day .num { font-size: 1.5rem; font-weight: 700; text-align: right; }
+  .day .dow { color: var(--muted); text-transform: capitalize; }
+  .day .act { min-width: 0; }
+  .day.empty .act { color: var(--muted); }
+  .day.key { background: var(--accent-soft); margin: 0 -8px; padding-left: 8px; padding-right: 8px; border-radius: 8px; }
+  .month { margin: 18px 0 4px; font-weight: 700; color: var(--accent); text-transform: capitalize; }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; overflow: hidden; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: .8rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  tr:last-child td { border-bottom: 0; }
+  .tag { display: inline-block; font-size: .75rem; padding: 2px 8px; border-radius: 999px;
+    background: var(--accent-soft); color: var(--accent); }
+  .tag.ok { background: transparent; border: 1px solid var(--ok); color: var(--ok); }
+  .scroll { overflow-x: auto; }
+  .note { color: var(--muted); font-size: .85rem; margin-top: 10px; }
+  @media (max-width: 480px) { .day { grid-template-columns: 44px 70px 1fr; gap: 8px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Viagem Itália 2027</h1>
+  <p>4 adultos · Porto Alegre ⇄ Roma · maio/junho de 2027</p>
+</header>
+
+<nav role="tablist">
+  <button role="tab" data-tab="inicial" aria-selected="true">Inicial</button>
+  <button role="tab" data-tab="passagens" aria-selected="false">Passagens</button>
+  <button role="tab" data-tab="cronograma" aria-selected="false">Cronograma</button>
+  <button role="tab" data-tab="orcamento" aria-selected="false">Orçamento</button>
+  <button role="tab" data-tab="hospedagens" aria-selected="false">Hospedagens</button>
+</nav>
+
+<main>
+  <!-- INICIAL -->
+  <section id="inicial">
+    <div class="cards">
+      <div class="card"><div class="label">Dia de ida</div><div class="big">15/05</div><div class="sub">sábado · chega em Roma dom 16/05, 10:15</div></div>
+      <div class="card"><div class="label">Dia de volta</div><div class="big">04/06</div><div class="sub">sexta · chega em Porto Alegre sáb 05/06, 00:35</div></div>
+      <div class="card"><div class="label">Dias totais</div><div class="big" id="total-dias">22</div><div class="sub">de 15/05 a 05/06 · 19 noites na Itália</div></div>
+    </div>
+    <h2>Cronograma</h2>
+    <div id="cron-inicial"></div>
+  </section>
+
+  <!-- PASSAGENS -->
+  <section id="passagens" hidden>
+    <h2>Voos comprados <span class="tag ok">✓ comprado em 23/11/2026</span></h2>
+    <div class="scroll"><table>
+      <tr><th></th><th>Voos</th><th>Sai</th><th>Chega</th></tr>
+      <tr><td><b>Ida</b></td><td>LA 4679 + LA 8120<br><small>conexão 3h55 em GRU</small></td><td>sáb 15/05<br>POA 12:10</td><td>dom 16/05<br>FCO 10:15</td></tr>
+      <tr><td><b>Volta</b></td><td>LA 8121 + LA 4678<br><small>conexão 2h55 em GRU</small></td><td>sex 04/06<br>FCO 13:05</td><td>sáb 05/06<br>POA 00:35</td></tr>
+    </table></div>
+    <p class="note">LATAM, econômica Standard nos dois sentidos: despacha 1 mala de 23 kg por pessoa, sem reembolso. Números dos voos da volta: conferir no e-ticket.</p>
+    <h2 style="margin-top:28px">Transportes na Itália <span class="tag">a comprar</span></h2>
+    <div class="scroll"><table>
+      <tr><th>Trecho</th><th>Data</th><th>Status</th></tr>
+      <tr><td>Transfer FCO → hotel em Roma</td><td>16/05</td><td>⏳ a definir</td></tr>
+      <tr><td>Veneza → Roma (trem)</td><td>03/06</td><td>⏳ abre ~fev/mar 2027</td></tr>
+      <tr><td>Trens entre as cidades</td><td>a definir</td><td>⏳ depende do roteiro</td></tr>
+      <tr><td>Roma → FCO (aeroporto às 10:00)</td><td>04/06</td><td>⏳ a definir</td></tr>
+    </table></div>
+  </section>
+
+  <!-- CRONOGRAMA -->
+  <section id="cronograma" hidden>
+    <h2>Dia a dia</h2>
+    <div id="cron-completo"></div>
+    <p class="note">Edite os textos na lista <code>ATIVIDADES</code> no fim deste arquivo.</p>
+  </section>
+
+  <!-- ORÇAMENTO -->
+  <section id="orcamento" hidden>
+    <h2>Orçamento</h2>
+    <div class="scroll"><table id="tab-orc">
+      <tr><th>Item</th><th>Status</th><th style="text-align:right">Valor (R$)</th></tr>
+    </table></div>
+    <p class="note">Passagem: R$ 28.239,68 = tarifa 26.500,04 + taxas 1.739,64 (R$ 7.059,92 por pessoa), 4x sem juros.</p>
+  </section>
+
+  <!-- HOSPEDAGENS -->
+  <section id="hospedagens" hidden>
+    <h2>Hospedagens</h2>
+    <div class="scroll"><table>
+      <tr><th>Cidade</th><th>Noites</th><th>Hotel</th><th>Status</th></tr>
+      <tr><td>Roma</td><td>a definir</td><td>—</td><td>⏳</td></tr>
+      <tr><td>Florença</td><td>a definir</td><td>—</td><td>⏳</td></tr>
+      <tr><td>Bolonha</td><td>a definir</td><td>—</td><td>⏳</td></tr>
+      <tr><td>Veneza</td><td>a definir</td><td>—</td><td>⏳</td></tr>
+      <tr><td>Roma (última noite, perto do Termini)</td><td>1 (03/06)</td><td>—</td><td>⏳</td></tr>
+    </table></div>
+    <p class="note">Critérios: elevador, quarto para 4 pessoas, perto da estação, cancelamento grátis. 19 noites no total (16/05 a 03/06).</p>
+  </section>
+</main>
+
+<script>
+  // ---- DADOS: edite aqui ----
+  // chave = dia (AAAA-MM-DD); valor = texto da atividade.
+  const ATIVIDADES = {
+    "2027-05-15": "Ida: POA 12:10 → GRU → Roma (LA 4679 + LA 8120)",
+    "2027-05-16": "Chegada em Roma 10:15 (FCO) · transfer · check-in",
+    "2027-06-03": "Trem Veneza → Roma · última noite perto do Termini",
+    "2027-06-04": "Aeroporto às 10:00 · voo FCO 13:05 → GRU → POA",
+    "2027-06-05": "Chegada em Porto Alegre 00:35"
+  };
+  const DESTAQUES = ["2027-05-15", "2027-05-16", "2027-06-03", "2027-06-04", "2027-06-05"];
+
+  const ORCAMENTO = [
+    { item: "Passagem aérea (4 pessoas)", status: "pago", valor: 28239.68 },
+    { item: "Hospedagens (19 noites)", status: "a definir", valor: null },
+    { item: "Trens entre cidades", status: "a definir", valor: null },
+    { item: "Transfer FCO e aeroporto", status: "a definir", valor: null },
+    { item: "Passeios e ingressos", status: "a definir", valor: null },
+    { item: "Seguro viagem", status: "a definir", valor: null },
+    { item: "Alimentação e extras", status: "a definir", valor: null }
+  ];
+  // ---- fim dos dados ----
+
+  const brl = n => n.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
+  const INICIO = new Date(2027, 4, 15), FIM = new Date(2027, 5, 5);
+
+  function dias() {
+    const lista = [];
+    for (let d = new Date(INICIO); d <= FIM; d.setDate(d.getDate() + 1)) lista.push(new Date(d));
+    return lista;
+  }
+  const chave = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+  function renderCronograma(el, soComAtividade) {
+    let mes = -1, html = "";
+    for (const d of dias()) {
+      const k = chave(d), txt = ATIVIDADES[k];
+      if (soComAtividade && !txt) continue;
+      if (d.getMonth() !== mes) {
+        mes = d.getMonth();
+        html += `<div class="month">${d.toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}</div>`;
+      }
+      const cls = "day" + (txt ? "" : " empty") + (DESTAQUES.includes(k) ? " key" : "");
+      html += `<div class="${cls}"><div class="num">${d.getDate()}</div>` +
+        `<div class="dow">${d.toLocaleDateString("pt-BR", { weekday: "long" })}</div>` +
+        `<div class="act">${txt || "—"}</div></div>`;
+    }
+    el.innerHTML = html;
+  }
+  renderCronograma(document.getElementById("cron-inicial"), true);
+  renderCronograma(document.getElementById("cron-completo"), false);
+  document.getElementById("total-dias").textContent = dias().length;
+
+  const tab = document.getElementById("tab-orc");
+  let soma = 0;
+  for (const o of ORCAMENTO) {
+    if (o.valor) soma += o.valor;
+    tab.insertAdjacentHTML("beforeend",
+      `<tr><td>${o.item}</td><td>${o.status}</td><td style="text-align:right">${o.valor ? brl(o.valor) : "—"}</td></tr>`);
+  }
+  tab.insertAdjacentHTML("beforeend",
+    `<tr><td><b>Total conhecido</b></td><td></td><td style="text-align:right"><b>${brl(soma)}</b></td></tr>`);
+
+  const botoes = document.querySelectorAll("nav button");
+  function abrir(nome) {
+    botoes.forEach(b => b.setAttribute("aria-selected", b.dataset.tab === nome));
+    document.querySelectorAll("main section").forEach(s => s.hidden = s.id !== nome);
+    try { localStorage.setItem("aba", nome); } catch (e) {}
+  }
+  botoes.forEach(b => b.addEventListener("click", () => abrir(b.dataset.tab)));
+  try { const a = localStorage.getItem("aba"); if (a) abrir(a); } catch (e) {}
+</script>
+</body>
+</html>
