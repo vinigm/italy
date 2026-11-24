@@ -8,63 +8,708 @@
   :root {
     --bg: #faf8f5; --card: #ffffff; --ink: #1f2430; --muted: #6b7280;
     --line: #e7e2da; --accent: #b4442b; --accent-soft: #f6e3de; --ok: #2f7d4f;
+    --ok-soft: #e6f4ec;
+    /* Cores das cidades */
+    --c-roma-bg: #fde8e2; --c-roma-ink: #9c3018; --c-roma-bd: #e5a493;
+    --c-florenca-bg: #fef3c7; --c-florenca-ink: #92400e; --c-florenca-bd: #f59e0b;
+    --c-veneza-bg: #e0f2fe; --c-veneza-ink: #075985; --c-veneza-bd: #38bdf8;
+    --c-milao-bg: #ede9fe; --c-milao-ink: #5b21b6; --c-milao-bd: #a78bfa;
+    --c-bolonha-bg: #dcfce7; --c-bolonha-ink: #166534; --c-bolonha-bd: #4ade80;
+    --c-vaticano-bg: #fef9c3; --c-vaticano-ink: #854d0e; --c-vaticano-bd: #eab308;
+    --c-viagem-bg: #e5e7eb; --c-viagem-ink: #374151; --c-viagem-bd: #9ca3af;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #16181d; --card: #1f232b; --ink: #eceef2; --muted: #9aa1ad;
+      --bg: #14161b; --card: #1d2028; --ink: #eceef2; --muted: #9aa1ad;
       --line: #2e333d; --accent: #e8836b; --accent-soft: #3a2621; --ok: #6cc28c;
+      --ok-soft: #1b3326;
+      --c-roma-bg: #451e16; --c-roma-ink: #f8b4a4; --c-roma-bd: #9c3a23;
+      --c-florenca-bg: #422c09; --c-florenca-ink: #fcd34d; --c-florenca-bd: #b45309;
+      --c-veneza-bg: #0c3149; --c-veneza-ink: #7dd3fc; --c-veneza-bd: #0284c7;
+      --c-milao-bg: #2a1854; --c-milao-ink: #c4b5fd; --c-milao-bd: #6d28d9;
+      --c-bolonha-bg: #113621; --c-bolonha-ink: #86efac; --c-bolonha-bd: #15803d;
+      --c-vaticano-bg: #423806; --c-vaticano-ink: #fde047; --c-vaticano-bd: #ca8a04;
+      --c-viagem-bg: #2a2e39; --c-viagem-ink: #d1d5db; --c-viagem-bd: #4b5563;
     }
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--ink);
-    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
-  header { padding: 24px 16px 8px; max-width: 820px; margin: 0 auto; }
-  header h1 { margin: 0; font-size: 1.5rem; }
-  header p { margin: 4px 0 0; color: var(--muted); font-size: .9rem; }
-  nav { max-width: 820px; margin: 12px auto 0; padding: 0 16px; display: flex; gap: 4px;
-    overflow-x: auto; border-bottom: 1px solid var(--line); }
-  nav button { background: none; border: 0; padding: 10px 14px; font: inherit; color: var(--muted);
-    cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
-  nav button[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
-  main { max-width: 820px; margin: 0 auto; padding: 20px 16px 48px; }
-  section[hidden] { display: none; }
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 28px; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  header {
+    padding: 24px 36px 8px; max-width: 96%; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 12px;
+  }
+  header h1 { margin: 0; font-size: 1.65rem; }
+  header p { margin: 2px 0 0; color: var(--muted); font-size: .95rem; }
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--bg);
+    max-width: 100%; margin: 8px auto 0; padding: 0 36px; display: flex; gap: 6px;
+    align-items: center;
+    overflow-x: auto; border-bottom: 1px solid var(--line);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+  .nav-hist {
+    display: flex;
+    gap: 4px;
+    margin-right: 10px;
+    padding-right: 12px;
+    border-right: 1px solid var(--line);
+  }
+  .nav-hist button {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    padding: 5px 10px;
+    font: inherit;
+    font-size: .82rem;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .nav-hist button:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .nav-hist button:disabled {
+    opacity: .38;
+    cursor: not-allowed;
+  }
+  nav button[role="tab"] {
+    background: none; border: 0; padding: 12px 18px; font: inherit; color: var(--muted);
+    cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: color .15s;
+  }
+  nav button[role="tab"]:hover { color: var(--ink); }
+  nav button[role="tab"][aria-selected="true"] {
+    color: var(--accent); border-bottom-color: var(--accent); font-weight: 600;
+  }
+  main { max-width: 96%; margin: 0 auto; padding: 24px 36px 64px; }
+  section[hidden] { display: none !important; }
+
+  /* Cards gerais */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 24px; }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
-  .card .label { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
+  .card .label { color: var(--muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; }
   .card .big { font-size: 1.7rem; font-weight: 700; margin: 4px 0; }
   .card .sub { color: var(--muted); font-size: .85rem; }
-  h2 { font-size: 1.1rem; margin: 0 0 12px; }
-  .day { display: grid; grid-template-columns: 56px 92px 1fr; gap: 12px; align-items: baseline;
-    padding: 10px 0; border-bottom: 1px solid var(--line); }
-  .day .num { font-size: 1.5rem; font-weight: 700; text-align: right; }
-  .day .dow { color: var(--muted); text-transform: capitalize; }
-  .day .act { min-width: 0; }
+  h2 { font-size: 1.15rem; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  h3 { font-size: 0.98rem; margin: 0 0 10px; }
+
+  /* Layout 2 colunas (Cronograma + To-Do, Modelagem + Resumo) */
+  .split-layout {
+    display: grid;
+    grid-template-columns: 1fr 480px;
+    gap: 32px;
+    align-items: start;
+  }
+  @media (max-width: 1100px) {
+    .split-layout { grid-template-columns: 1fr; }
+  }
+  .sticky-side {
+    position: sticky;
+    top: 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* Grade de Calendário Visual (estilo planilha) */
+  .cal-box {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .cal-title {
+    background: #4b5563;
+    color: #fff;
+    text-align: center;
+    font-weight: 700;
+    font-size: .85rem;
+    letter-spacing: .06em;
+    padding: 7px 12px;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .cal-title span.sub { font-weight: 400; font-size: .78rem; opacity: .88; text-transform: none; }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    border-top: 1px solid var(--line);
+  }
+  .cal-dow {
+    text-align: center;
+    font-weight: 700;
+    font-size: .78rem;
+    padding: 7px 4px;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+  }
+  .cal-dow:nth-child(odd) { background: rgba(180, 68, 43, 0.06); }
+  .cal-dow:last-child { border-right: 0; }
+  .cal-cell {
+    min-height: 108px;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: relative;
+    transition: background .12s, box-shadow .12s;
+    user-select: none;
+  }
+  .cal-cell:nth-child(7n) { border-right: 0; }
+  .cal-cell.off {
+    min-height: 44px;
+    background: rgba(180, 68, 43, 0.09);
+    opacity: .6;
+  }
+  .cal-cell.trip { cursor: pointer; }
+  .cal-cell.trip:hover {
+    box-shadow: inset 0 0 0 2px var(--accent);
+  }
+  .cal-cell.selected {
+    box-shadow: inset 0 0 0 2.5px var(--accent);
+    background: var(--accent-soft);
+  }
+  .cal-cell.drag-over {
+    box-shadow: inset 0 0 0 2.5px var(--ok) !important;
+    background: var(--ok-soft) !important;
+  }
+  .cal-num {
+    font-weight: 700;
+    font-size: .82rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .cal-num .m-tag {
+    font-size: .68rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .city-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    padding: 3px 7px;
+    border-radius: 6px;
+    font-size: .76rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+    line-height: 1.25;
+  }
+  .city-pill[data-city="roma"] { background: var(--c-roma-bg); color: var(--c-roma-ink); border-color: var(--c-roma-bd); }
+  .city-pill[data-city="florenca"] { background: var(--c-florenca-bg); color: var(--c-florenca-ink); border-color: var(--c-florenca-bd); }
+  .city-pill[data-city="veneza"] { background: var(--c-veneza-bg); color: var(--c-veneza-ink); border-color: var(--c-veneza-bd); }
+  .city-pill[data-city="milao"] { background: var(--c-milao-bg); color: var(--c-milao-ink); border-color: var(--c-milao-bd); }
+  .city-pill[data-city="bolonha"] { background: var(--c-bolonha-bg); color: var(--c-bolonha-ink); border-color: var(--c-bolonha-bd); }
+  .city-pill[data-city="vaticano"] { background: var(--c-vaticano-bg); color: var(--c-vaticano-ink); border-color: var(--c-vaticano-bd); }
+  .city-pill[data-city="viagem"] { background: var(--c-viagem-bg); color: var(--c-viagem-ink); border-color: var(--c-viagem-bd); }
+
+  .cal-mini-note {
+    font-size: .71rem;
+    color: var(--muted);
+    line-height: 1.25;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .cal-badge-count {
+    font-size: .68rem;
+    color: var(--accent);
+    font-weight: 600;
+    margin-top: auto;
+  }
+
+  /* Lista Dia a Dia */
+  .day {
+    display: grid; grid-template-columns: 52px 115px 115px 1fr; gap: 14px; align-items: center;
+    padding: 12px 10px; border-bottom: 1px solid var(--line);
+  }
+  .day .num { font-size: 1.4rem; font-weight: 700; text-align: right; }
+  .day .dow { color: var(--muted); text-transform: capitalize; font-size: .88rem; }
+  .day .act { min-width: 0; font-size: .92rem; }
   .day.empty .act { color: var(--muted); }
-  .day.key { background: var(--accent-soft); margin: 0 -8px; padding-left: 8px; padding-right: 8px; border-radius: 8px; }
-  .month { margin: 18px 0 4px; font-weight: 700; color: var(--accent); text-transform: capitalize; }
-  table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line);
-    border-radius: 12px; overflow: hidden; }
+  .day.key { background: var(--accent-soft); border-radius: 8px; }
+  .month { margin: 16px 0 6px; font-weight: 700; color: var(--accent); text-transform: capitalize; font-size: .95rem; }
+  .daywrap { border-bottom: 1px solid var(--line); scroll-margin-top: 120px; }
+  .sticky-bar {
+    position: sticky;
+    top: 48px;
+    z-index: 20;
+    background: var(--bg);
+    padding: 12px 0;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .daywrap .day { border-bottom: 0; }
+  .daywrap.click > .day { cursor: pointer; }
+  .daywrap.click > .day:hover { background: var(--accent-soft); border-radius: 8px; }
+  .daywrap.flash > .day { outline: 2px solid var(--accent); border-radius: 8px; }
+  .chev { color: var(--muted); font-size: .78rem; margin-left: 6px; display: inline-block; transition: transform .15s; }
+  .agenda { display: none; margin: 4px 0 12px 58px; padding: 8px 12px 10px 14px; border-left: 2px solid var(--accent); background: rgba(180,68,43,0.03); border-radius: 0 8px 8px 0; }
+  .daywrap.open .agenda { display: block; }
+  .daywrap.open .chev { transform: rotate(90deg); }
+  .slot { display: grid; grid-template-columns: 62px 150px 1fr auto; gap: 12px; padding: 7px 0; align-items: baseline; font-size: .92rem; border-bottom: 1px dashed rgba(0,0,0,0.06); }
+  .slot:last-of-type { border-bottom: 0; }
+  .slot .h { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--accent); }
+  .slot-tag {
+    display: inline-block;
+    font-size: .74rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid transparent;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .slot-tag[data-city="roma"] { background: var(--c-roma-bg); color: var(--c-roma-ink); border-color: var(--c-roma-bd); }
+  .slot-tag[data-city="vaticano"] { background: var(--c-vaticano-bg); color: var(--c-vaticano-ink); border-color: var(--c-vaticano-bd); }
+  .slot-tag[data-city="florenca"] { background: var(--c-florenca-bg); color: var(--c-florenca-ink); border-color: var(--c-florenca-bd); }
+  .slot-tag[data-city="veneza"] { background: var(--c-veneza-bg); color: var(--c-veneza-ink); border-color: var(--c-veneza-bd); }
+  .slot-tag[data-city="milao"] { background: var(--c-milao-bg); color: var(--c-milao-ink); border-color: var(--c-milao-bd); }
+  .slot-tag[data-city="bolonha"] { background: var(--c-bolonha-bg); color: var(--c-bolonha-ink); border-color: var(--c-bolonha-bd); }
+  .slot-tag[data-city="viagem"] { background: var(--c-viagem-bg); color: var(--c-viagem-ink); border-color: var(--c-viagem-bd); }
+  .slot .x { background: none; border: 0; color: var(--muted); cursor: pointer; font-size: .95rem; padding: 0 4px; }
+  .slot .x:hover { color: var(--accent); }
+  .addrow { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .addrow input, .addrow select {
+    font: inherit; font-size: .88rem; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px;
+    background: var(--card); color: var(--ink);
+  }
+  .addrow input.in-tag { width: 155px; font-weight: 700; text-transform: uppercase; }
+  .addrow input.in-t { flex: 1; min-width: 180px; }
+  .btn {
+    font: inherit; font-size: .86rem; font-weight: 600; padding: 6px 12px; border: 0; border-radius: 8px;
+    background: var(--accent); color: #fff; cursor: pointer; white-space: nowrap;
+  }
+  .btn.secondary {
+    background: var(--bg); color: var(--ink); border: 1px solid var(--line);
+  }
+  .btn.secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.sm { padding: 4px 9px; font-size: .78rem; }
+  .hint { color: var(--muted); font-size: .82rem; }
+
+  /* To-Do List Lateral */
+  .todo-panel {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .todo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 12px 0;
+    max-height: 65vh;
+    overflow-y: auto;
+  }
+  .todo-item {
+    display: grid;
+    grid-template-columns: 20px 1fr auto;
+    gap: 8px;
+    align-items: start;
+    padding: 9px 10px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--bg);
+    font-size: .87rem;
+  }
+  .todo-item.done { opacity: .55; }
+  .todo-item.done .todo-title { text-decoration: line-through; }
+  .todo-item input[type=checkbox] { margin-top: 3px; cursor: pointer; accent-color: var(--accent); }
+  .todo-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 2px; }
+  .todo-date-badge {
+    font-size: .72rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    cursor: pointer;
+  }
+  .todo-date-badge:hover { text-decoration: underline; }
+  .todo-cat {
+    font-size: .7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .03em;
+  }
+  .todo-note { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+  .todo-del { background: none; border: 0; color: var(--muted); cursor: pointer; font-size: .9rem; padding: 0 2px; }
+  .todo-del:hover { color: var(--accent); }
+
+  /* Modelagem de Roteiro */
+  .palette-bar {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .palette-chips { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .drag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 13px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: .86rem;
+    cursor: grab;
+    border: 2px solid transparent;
+    transition: transform .1s, box-shadow .1s;
+    user-select: none;
+  }
+  .drag-chip:active { cursor: grabbing; transform: scale(0.97); }
+  .drag-chip.active-brush {
+    box-shadow: 0 0 0 3px var(--ink);
+  }
+  .drag-chip[data-city="roma"] { background: var(--c-roma-bg); color: var(--c-roma-ink); border-color: var(--c-roma-bd); }
+  .drag-chip[data-city="florenca"] { background: var(--c-florenca-bg); color: var(--c-florenca-ink); border-color: var(--c-florenca-bd); }
+  .drag-chip[data-city="veneza"] { background: var(--c-veneza-bg); color: var(--c-veneza-ink); border-color: var(--c-veneza-bd); }
+  .drag-chip[data-city="milao"] { background: var(--c-milao-bg); color: var(--c-milao-ink); border-color: var(--c-milao-bd); }
+  .drag-chip[data-city="bolonha"] { background: var(--c-bolonha-bg); color: var(--c-bolonha-ink); border-color: var(--c-bolonha-bd); }
+  .drag-chip[data-city="vaticano"] { background: var(--c-vaticano-bg); color: var(--c-vaticano-ink); border-color: var(--c-vaticano-bd); }
+  .drag-chip[data-city="limpar"] { background: var(--bg); color: var(--muted); border-color: var(--line); font-weight: 600; }
+
+  .mod-cell {
+    min-height: 92px;
+    cursor: pointer;
+  }
+  .mod-cell.locked {
+    cursor: not-allowed;
+    background: rgba(0,0,0,0.03);
+  }
+  .mod-cell .city-pill {
+    cursor: grab;
+    padding: 5px 8px;
+    font-size: .8rem;
+  }
+  .mod-cell .city-pill .rm {
+    background: none; border: 0; color: inherit; opacity: .65; cursor: pointer; font-size: .85rem; padding: 0 2px;
+  }
+  .mod-cell .city-pill .rm:hover { opacity: 1; }
+  .mod-actions {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: .7rem;
+    color: var(--muted);
+  }
+  .extend-btn {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: .68rem;
+    cursor: pointer;
+    color: var(--ink);
+  }
+  .extend-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: .88rem;
+  }
+  .stat-row:last-child { border-bottom: 0; }
+  .leg-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    border-radius: 6px;
+    background: var(--bg);
+    margin-bottom: 6px;
+    font-size: .83rem;
+  }
+  .alert-box {
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: .82rem;
+    margin-top: 8px;
+    border: 1px solid var(--line);
+  }
+  .alert-box.warn { background: #fef3c7; color: #92400e; border-color: #f59e0b; }
+  .alert-box.good { background: var(--ok-soft); color: var(--ok); border-color: var(--ok); }
+
+  /* Tabela Estilo Excel — Grade Horária 06:00 às 00:00 (Painéis Congelados) */
+  .excel-wrap {
+    margin-top: 32px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .excel-scroll {
+    overflow: auto;
+    max-width: 100%;
+    height: 75vh;
+    position: relative;
+  }
+  table.excel-grid {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 0;
+    border-radius: 0;
+    table-layout: fixed;
+    font-size: .82rem;
+    overflow: visible;
+  }
+  table.excel-grid th,
+  table.excel-grid td {
+    width: 195px;
+    min-width: 195px;
+    max-width: 195px;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 6px 8px;
+    vertical-align: top;
+    line-height: 1.35;
+  }
+  table.excel-grid th:last-child,
+  table.excel-grid td:last-child {
+    border-right: 0;
+  }
+  table.excel-grid th.col-hora,
+  table.excel-grid td.col-hora {
+    width: 68px;
+    min-width: 68px;
+    max-width: 68px;
+    text-align: center;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    background: var(--bg);
+    color: var(--muted);
+    position: sticky;
+    left: 0;
+    z-index: 15;
+    border-right: 2px solid var(--line);
+    box-shadow: 3px 0 8px rgba(0, 0, 0, 0.06);
+  }
+  table.excel-grid thead tr:first-child th {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    text-align: center;
+    background: var(--bg);
+    color: var(--ink);
+    padding: 8px 6px;
+    height: 46px;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  table.excel-grid thead tr.row-city th {
+    position: sticky;
+    top: 46px;
+    z-index: 20;
+    text-align: center;
+    padding: 6px;
+    height: 38px;
+    background: var(--card);
+    border-bottom: 2px solid var(--line);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+  }
+  table.excel-grid thead tr:first-child th.col-hora,
+  table.excel-grid thead tr.row-city th.col-hora {
+    left: 0;
+    z-index: 30;
+    background: var(--bg);
+  }
+  table.excel-grid td.excel-cell {
+    height: 44px;
+    cursor: pointer;
+    transition: background .1s;
+  }
+  /* Destaque apenas na linha das 12:00 (almoço / divisor manhã e tarde) */
+  table.excel-grid tbody tr.row-lunch td.excel-cell {
+    background: rgba(245, 158, 11, 0.11);
+  }
+  table.excel-grid tbody tr.row-lunch td.col-hora {
+    background: #fef3c7;
+    color: #92400e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) table.excel-grid tbody tr.row-lunch td.excel-cell {
+      background: rgba(245, 158, 11, 0.12);
+    }
+    :root:not([data-theme="light"]) table.excel-grid tbody tr.row-lunch td.col-hora {
+      background: #3b2a0e;
+      color: #fcd34d;
+    }
+  }
+  table.excel-grid td.excel-cell:hover {
+    background: var(--accent-soft) !important;
+  }
+  .excel-item {
+    background: var(--c-viagem-bg);
+    color: var(--c-viagem-ink);
+    border: 1px solid var(--c-viagem-bd);
+    border-left-width: 4px;
+    border-radius: 5px;
+    padding: 4px 7px;
+    margin-bottom: 4px;
+    font-size: .79rem;
+    font-weight: 500;
+    word-break: break-word;
+  }
+  .excel-item:last-child { margin-bottom: 0; }
+  .excel-item[data-city="roma"] { background: var(--c-roma-bg); color: var(--c-roma-ink); border-color: var(--c-roma-bd); }
+  .excel-item[data-city="vaticano"] { background: var(--c-vaticano-bg); color: var(--c-vaticano-ink); border-color: var(--c-vaticano-bd); }
+  .excel-item[data-city="florenca"] { background: var(--c-florenca-bg); color: var(--c-florenca-ink); border-color: var(--c-florenca-bd); }
+  .excel-item[data-city="veneza"] { background: var(--c-veneza-bg); color: var(--c-veneza-ink); border-color: var(--c-veneza-bd); }
+  .excel-item[data-city="milao"] { background: var(--c-milao-bg); color: var(--c-milao-ink); border-color: var(--c-milao-bd); }
+  .excel-item[data-city="bolonha"] { background: var(--c-bolonha-bg); color: var(--c-bolonha-ink); border-color: var(--c-bolonha-bd); }
+  .excel-item[data-city="viagem"] { background: var(--c-viagem-bg); color: var(--c-viagem-ink); border-color: var(--c-viagem-bd); }
+
+  /* Tabelas padrão */
+  table {
+    width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; overflow: hidden;
+  }
   th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
-  th { font-size: .8rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  th { font-size: .78rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
   tr:last-child td { border-bottom: 0; }
-  .tag { display: inline-block; font-size: .75rem; padding: 2px 8px; border-radius: 999px;
-    background: var(--accent-soft); color: var(--accent); }
+  .tag {
+    display: inline-block; font-size: .75rem; padding: 2px 8px; border-radius: 999px;
+    background: var(--accent-soft); color: var(--accent); font-weight: 600;
+  }
   .tag.ok { background: transparent; border: 1px solid var(--ok); color: var(--ok); }
   .scroll { overflow-x: auto; }
-  .note { color: var(--muted); font-size: .85rem; margin-top: 10px; }
-  @media (max-width: 480px) { .day { grid-template-columns: 44px 70px 1fr; gap: 8px; } }
+  .note { color: var(--muted); font-size: .84rem; margin-top: 10px; }
+
+  @media (max-width: 720px) {
+    header, nav, main { padding-left: 12px; padding-right: 12px; }
+    .day { grid-template-columns: 38px 74px 78px 1fr; gap: 6px; font-size: .85rem; }
+    .agenda { margin-left: 12px; }
+    .cal-cell { min-height: 68px; padding: 4px; }
+    .city-pill { font-size: .68rem; padding: 2px 4px; }
+  }
+
+  /* Camada de Login / Proteção por Senha */
+  #auth-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  #auth-overlay[hidden] { display: none !important; }
+  .auth-box {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 32px 28px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+    text-align: center;
+  }
+  .auth-box h1 { margin: 8px 0 4px; font-size: 1.45rem; }
+  .auth-box p { margin: 0 0 20px; color: var(--muted); font-size: .9rem; }
+  .auth-box input {
+    width: 100%;
+    font: inherit;
+    font-size: 1rem;
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--ink);
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  .auth-box input:focus { outline: 2px solid var(--accent); border-color: transparent; }
+  .auth-box button {
+    width: 100%;
+    padding: 11px;
+    font-size: .98rem;
+  }
+  .auth-err {
+    color: var(--accent);
+    font-size: .84rem;
+    font-weight: 600;
+    margin-top: 10px;
+    display: none;
+  }
+  body.locked > header,
+  body.locked > nav,
+  body.locked > main {
+    display: none !important;
+  }
 </style>
 </head>
-<body>
+<body class="locked">
+<div id="auth-overlay">
+  <form class="auth-box" id="auth-form">
+    <div style="font-size:2.2rem;">🇮🇹</div>
+    <h1>Viagem Itália 2027</h1>
+    <p>Painel privado da família · Digite a senha para acessar</p>
+    <input type="password" id="auth-pass" placeholder="Senha de acesso" autocomplete="current-password" autofocus>
+    <button type="submit" class="btn">Entrar</button>
+    <div class="auth-err" id="auth-err">Senha incorreta. Tente novamente.</div>
+  </form>
+</div>
 <header>
-  <h1>Viagem Itália 2027</h1>
-  <p>4 adultos · Porto Alegre ⇄ Roma · maio/junho de 2027</p>
+  <div>
+    <h1>Viagem Itália 2027</h1>
+    <p>4 adultos (Vinicius, Victoria, Mãe e Pai) · Porto Alegre ⇄ Roma · 15/05 a 05/06/2027 (19 noites)</p>
+  </div>
+  <button type="button" class="btn secondary sm" id="btn-logout" title="Bloquear página">🔒 Sair</button>
 </header>
 
 <nav role="tablist">
+  <div class="nav-hist">
+    <button type="button" id="btn-nav-back" disabled title="Voltar para a aba/posição anterior">← Voltar</button>
+    <button type="button" id="btn-nav-fwd" disabled title="Avançar">Avançar →</button>
+  </div>
   <button role="tab" data-tab="inicial" aria-selected="true">Inicial</button>
+  <button role="tab" data-tab="modelagem" aria-selected="false">Modelagem de Roteiro</button>
+  <button role="tab" data-tab="cronograma" aria-selected="false">Cronograma &amp; To-Do</button>
+  <button role="tab" data-tab="mod-hospedagem" aria-selected="false">Modelagem de Hospedagem</button>
   <button role="tab" data-tab="passagens" aria-selected="false">Passagens</button>
-  <button role="tab" data-tab="cronograma" aria-selected="false">Cronograma</button>
   <button role="tab" data-tab="orcamento" aria-selected="false">Orçamento</button>
   <button role="tab" data-tab="hospedagens" aria-selected="false">Hospedagens</button>
 </nav>
@@ -76,35 +721,215 @@
       <div class="card"><div class="label">Dia de ida</div><div class="big">15/05</div><div class="sub">sábado · chega em Roma dom 16/05, 10:15</div></div>
       <div class="card"><div class="label">Dia de volta</div><div class="big">04/06</div><div class="sub">sexta · chega em Porto Alegre sáb 05/06, 00:35</div></div>
       <div class="card"><div class="label">Dias totais</div><div class="big" id="total-dias">22</div><div class="sub">de 15/05 a 05/06 · 19 noites na Itália</div></div>
+      <div class="card"><div class="label">Cidades no Roteiro</div><div class="big" id="card-cidades-count">—</div><div class="sub" id="card-cidades-sub">Personalize na aba Modelagem</div></div>
     </div>
-    <h2>Cronograma</h2>
+
+    <h2>Visão Geral do Calendário <span class="tag">Clique num dia para abrir no Cronograma</span></h2>
+    <div id="cal-inicial"></div>
+
+    <h2>Datas-Chave &amp; Resumo</h2>
     <div id="cron-inicial"></div>
+  </section>
+
+  <!-- MODELAGEM DE ROTEIRO -->
+  <section id="modelagem" hidden>
+    <div class="palette-bar">
+      <div>
+        <div style="font-weight:700; font-size:.95rem; margin-bottom:6px;">
+          1. Arraste um destino para o calendário (ou clique num destino abaixo e depois clique/arraste pelos dias):
+        </div>
+        <div class="palette-chips" id="palette-chips">
+          <div class="drag-chip" draggable="true" data-city="roma" title="Arraste ou clique para selecionar">🏛️ Roma</div>
+          <div class="drag-chip" draggable="true" data-city="vaticano" title="Arraste ou clique para selecionar (mesmo hotel de Roma)">🇻🇦 Vaticano</div>
+          <div class="drag-chip" draggable="true" data-city="florenca" title="Arraste ou clique para selecionar">⚜️ Florença</div>
+          <div class="drag-chip" draggable="true" data-city="veneza" title="Arraste ou clique para selecionar">🛶 Veneza</div>
+          <div class="drag-chip" draggable="true" data-city="milao" title="Arraste ou clique para selecionar">🏰 Milão</div>
+          <div class="drag-chip" draggable="true" data-city="bolonha" title="Arraste ou clique para selecionar">🍝 Bolonha</div>
+          <div class="drag-chip" draggable="true" data-city="limpar" title="Limpar dia">🧹 Limpar dia</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button class="btn secondary sm" data-preset="todas5">Sugestão Completa (Roma + Milão + Veneza + Bolonha + Florença)</button>
+        <button class="btn secondary sm" data-preset="rascunho">Seu Rascunho da Planilha</button>
+        <button class="btn secondary sm" data-preset="bolonha">Sem Milão (foco Bolonha)</button>
+      </div>
+    </div>
+
+    <div class="split-layout">
+      <div>
+        <div class="cal-box">
+          <div class="cal-title">
+            <span>MAIO / JUNHO 2027 — MODELAGEM DE HOSPEDAGEM (ONDE DORMIR CADA NOITE)</span>
+            <span class="sub">Dica: arraste de um dia para os seguintes para esticar a estadia</span>
+          </div>
+          <div class="cal-grid" id="cal-modelagem"></div>
+        </div>
+        <p class="note">
+          <b>Como funciona:</b> Cada célula de <b>16/05 a 03/06</b> representa uma das <b>19 noites</b> na Itália (a cidade onde vocês dormem naquela noite). O dia 15/05 é o voo de ida e 04/06 o voo de volta (às 13:05, saindo de Roma). Por segurança, a noite de <b>03/06</b> deve ser sempre em <b>Roma</b>.
+        </p>
+      </div>
+
+      <aside class="sticky-side">
+        <div class="todo-panel">
+          <h3>Resumo da Modelagem (<span id="mod-total-noites">0</span>/19 noites)</h3>
+          <div id="mod-stats-cidades"></div>
+
+          <h3 style="margin-top:16px;">Trechos de Trem &amp; Trocas de Hotel (<span id="mod-trocas">0</span>)</h3>
+          <div id="mod-trechos"></div>
+
+          <div id="mod-alertas"></div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="excel-wrap">
+      <div class="cal-title">
+        <span>VISÃO GERAL POR HORA (06:00 ÀS 00:00) — TODOS OS 22 DIAS CORRIDOS</span>
+        <span class="sub">Clique em qualquer célula para abrir/editar o dia ou adicionar um horário naquela faixa</span>
+      </div>
+      <div class="excel-scroll" id="excel-horarios"></div>
+    </div>
+  </section>
+
+  <!-- CRONOGRAMA & TO-DO -->
+  <section id="cronograma" hidden>
+    <div class="split-layout">
+      <div>
+        <div class="sticky-bar">
+          <h2 style="margin:0;">Roteiro Detalhado Dia a Dia</h2>
+          <div style="display:flex; gap:6px;">
+            <button class="btn secondary sm" id="btn-expand-all">Expandir todos</button>
+            <button class="btn secondary sm" id="btn-collapse-all">Recolher todos</button>
+          </div>
+        </div>
+        <div id="cron-completo"></div>
+        <p class="note">Clique num dia para abrir os horários ou adicionar atividades. Tudo fica salvo no navegador.</p>
+      </div>
+
+      <aside class="sticky-side">
+        <div class="todo-panel">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3 style="margin:0;">To-Do List &amp; Reservas</h3>
+            <span class="tag" id="todo-counter">0 pendentes</span>
+          </div>
+          <p class="hint" style="margin:4px 0 10px;">Clique na data de uma tarefa para pular direto para o dia no cronograma.</p>
+
+          <div class="addrow" style="margin-bottom:10px;">
+            <input type="date" id="todo-in-date" min="2027-05-15" max="2027-06-05" value="2027-05-19" style="width:130px;">
+            <input type="text" id="todo-in-text" placeholder="Nova tarefa / reserva...">
+            <button class="btn sm" id="todo-btn-add">+ Adicionar</button>
+          </div>
+
+          <div class="todo-list" id="todo-list"></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- MODELAGEM DE HOSPEDAGEM -->
+  <section id="mod-hospedagem" hidden>
+    <div class="cards" id="hosp-kpis"></div>
+
+    <div class="split-layout">
+      <div>
+        <h2>Amostras &amp; Cotações Coletadas (Airbnb / Booking)</h2>
+        <div class="card" style="margin-bottom:18px;">
+          <h3 style="margin-top:0;">+ Adicionar nova cotação de hospedagem</h3>
+          <div class="addrow" style="margin-top:0;">
+            <select id="in-hosp-city">
+              <option value="roma">🏛️ Roma</option>
+              <option value="florenca">⚜️ Florença</option>
+              <option value="veneza">🛶 Veneza</option>
+              <option value="milao">🏰 Milão</option>
+              <option value="bolonha">🍝 Bolonha</option>
+            </select>
+            <input type="text" id="in-hosp-nome" placeholder="Nome / Bairro (ex: Apto Prati · 2 quartos)" style="min-width:210px; flex:2;">
+            <input type="text" id="in-hosp-fonte" placeholder="Fonte (Airbnb, Booking)" value="Airbnb" style="width:120px;">
+            <input type="number" id="in-hosp-noites" placeholder="Noites" value="4" min="1" max="19" style="width:80px;" title="Quantidade de noites dessa cotação">
+            <input type="number" id="in-hosp-total" placeholder="Total R$" step="1" min="0" style="width:120px;" title="Valor total em R$ para o período">
+            <button class="btn" id="btn-add-hosp">+ Adicionar</button>
+          </div>
+          <div class="hint" style="margin-top:6px;">
+            Você pode lançar tanto uma opção específica (com nome) quanto preços avulsos vistos nos pinos do mapa para calibrar a média da cidade.
+          </div>
+        </div>
+
+        <div id="hosp-lista-cidades"></div>
+      </div>
+
+      <aside class="sticky-side">
+        <div class="todo-panel">
+          <h3>Projeção pelas 19 Noites do Roteiro</h3>
+          <p class="hint" style="margin:0 0 12px;">
+            Multiplica o número de noites de cada cidade (definido na aba <b>Modelagem de Roteiro</b>) pela diária média coletada ao lado.
+          </p>
+          <div id="hosp-projecao-tabela"></div>
+        </div>
+      </aside>
+    </div>
   </section>
 
   <!-- PASSAGENS -->
   <section id="passagens" hidden>
-    <h2>Voos comprados <span class="tag ok">✓ comprado em 23/11/2026</span></h2>
-    <div class="scroll"><table>
-      <tr><th></th><th>Voos</th><th>Sai</th><th>Chega</th></tr>
-      <tr><td><b>Ida</b></td><td>LA 4679 + LA 8120<br><small>conexão 3h55 em GRU</small></td><td>sáb 15/05<br>POA 12:10</td><td>dom 16/05<br>FCO 10:15</td></tr>
-      <tr><td><b>Volta</b></td><td>LA 8121 + LA 4678<br><small>conexão 2h55 em GRU</small></td><td>sex 04/06<br>FCO 13:05</td><td>sáb 05/06<br>POA 00:35</td></tr>
-    </table></div>
-    <p class="note">LATAM, econômica Standard nos dois sentidos: despacha 1 mala de 23 kg por pessoa, sem reembolso. Números dos voos da volta: conferir no e-ticket.</p>
-    <h2 style="margin-top:28px">Transportes na Itália <span class="tag">a comprar</span></h2>
-    <div class="scroll"><table>
-      <tr><th>Trecho</th><th>Data</th><th>Status</th></tr>
-      <tr><td>Transfer FCO → hotel em Roma</td><td>16/05</td><td>⏳ a definir</td></tr>
-      <tr><td>Veneza → Roma (trem)</td><td>03/06</td><td>⏳ abre ~fev/mar 2027</td></tr>
-      <tr><td>Trens entre as cidades</td><td>a definir</td><td>⏳ depende do roteiro</td></tr>
-      <tr><td>Roma → FCO (aeroporto às 10:00)</td><td>04/06</td><td>⏳ a definir</td></tr>
-    </table></div>
-  </section>
+    <h2>Voos comprados — LATAM Airlines <span class="tag ok">✓ comprado em 23/11/2026</span></h2>
 
-  <!-- CRONOGRAMA -->
-  <section id="cronograma" hidden>
-    <h2>Dia a dia</h2>
-    <div id="cron-completo"></div>
-    <p class="note">Edite os textos na lista <code>ATIVIDADES</code> no fim deste arquivo.</p>
+    <div class="cards" style="margin-bottom:18px;">
+      <div class="card">
+        <div class="label">Código de Reserva (Localizador)</div>
+        <div class="big" style="color:var(--accent); letter-spacing:.04em;">WTFOOL</div>
+        <div class="sub">Nº de Compra: <b>LA9575551UPPK</b></div>
+      </div>
+      <div class="card">
+        <div class="label">Tarifa &amp; Passageiros</div>
+        <div class="big">4 Adultos</div>
+        <div class="sub">Econômica <b>Standard</b> (Ida e Volta)</div>
+      </div>
+      <div class="card">
+        <div class="label">Bagagem Total Incluída (4 pax)</div>
+        <div class="big">12 Volumes</div>
+        <div class="sub">4 mochilas + 4 malas de mão (12 kg) + <b>4 despachadas (23 kg)</b></div>
+      </div>
+    </div>
+
+    <div class="scroll"><table>
+      <tr><th>Sentido</th><th>Trecho &amp; Voo</th><th>Aeronave</th><th>Saída (hora local)</th><th>Chegada (hora local)</th><th>Duração</th></tr>
+      <tr>
+        <td rowspan="2"><b>IDA</b><br><small class="hint">Sáb 15/05/2027<br>Total: 17h 05min</small></td>
+        <td><b>LA 4679</b> · Porto Alegre → São Paulo<br><small class="hint">Operado por Latam Airlines Brasil</small></td>
+        <td>Airbus A320</td>
+        <td><b>sáb 15/05 · 12:10</b><br><small>Salgado Filho (POA)</small></td>
+        <td><b>sáb 15/05 · 13:55</b><br><small>Guarulhos Intl. (GRU)</small></td>
+        <td>1h 45min<br><span class="tag">Conexão: 3h 55min</span></td>
+      </tr>
+      <tr>
+        <td><b>LA 8120</b> · São Paulo → Roma<br><small class="hint">Operado por Latam Airlines Brasil</small></td>
+        <td>Boeing B777-300</td>
+        <td><b>sáb 15/05 · 17:50</b><br><small>Guarulhos Intl. (GRU)</small></td>
+        <td><b>dom 16/05 · 10:15</b> <small>(+1)</small><br><small>Fiumicino (FCO)</small></td>
+        <td>11h 25min</td>
+      </tr>
+      <tr>
+        <td rowspan="2"><b>VOLTA</b><br><small class="hint">Sex 04/06/2027<br>Total: 16h 30min</small></td>
+        <td><b>LA 8121</b> · Roma → São Paulo<br><small class="hint">Operado por Latam Airlines Brasil</small></td>
+        <td>Boeing B777-300</td>
+        <td><b>sex 04/06 · 13:05</b><br><small>Fiumicino (FCO)</small></td>
+        <td><b>sex 04/06 · 19:55</b><br><small>Guarulhos Intl. (GRU)</small></td>
+        <td>11h 50min<br><span class="tag">Conexão: 2h 55min</span></td>
+      </tr>
+      <tr>
+        <td><b>LA 4678</b> · São Paulo → Porto Alegre<br><small class="hint">Operado por Latam Airlines Brasil</small></td>
+        <td>Airbus A320</td>
+        <td><b>sex 04/06 · 22:50</b><br><small>Guarulhos Intl. (GRU)</small></td>
+        <td><b>sáb 05/06 · 00:35</b> <small>(+1)</small><br><small>Salgado Filho (POA)</small></td>
+        <td>1h 45min</td>
+      </tr>
+    </table></div>
+    <p class="note">
+      <b>Franquia por passageiro (Tarifa Standard):</b> 1 bolsa ou mochila (item pessoal) + 1 mala pequena de mão (até 12 kg) + 1 bagagem despachada (até 23 kg). Remarcação permitida mediante taxa + diferença tarifária; sem reembolso.
+    </p>
+
+    <h2 style="margin-top:28px">Deslocamentos Internos (gerados pela sua Modelagem) <span class="tag">a comprar ~fev/mar 2027</span></h2>
+    <div class="scroll"><table id="tab-transportes-dinamica"></table></div>
   </section>
 
   <!-- ORÇAMENTO -->
@@ -118,90 +943,1287 @@
 
   <!-- HOSPEDAGENS -->
   <section id="hospedagens" hidden>
-    <h2>Hospedagens</h2>
-    <div class="scroll"><table>
-      <tr><th>Cidade</th><th>Noites</th><th>Hotel</th><th>Status</th></tr>
-      <tr><td>Roma</td><td>a definir</td><td>—</td><td>⏳</td></tr>
-      <tr><td>Florença</td><td>a definir</td><td>—</td><td>⏳</td></tr>
-      <tr><td>Bolonha</td><td>a definir</td><td>—</td><td>⏳</td></tr>
-      <tr><td>Veneza</td><td>a definir</td><td>—</td><td>⏳</td></tr>
-      <tr><td>Roma (última noite, perto do Termini)</td><td>1 (03/06)</td><td>—</td><td>⏳</td></tr>
-    </table></div>
-    <p class="note">Critérios: elevador, quarto para 4 pessoas, perto da estação, cancelamento grátis. 19 noites no total (16/05 a 03/06).</p>
+    <h2>Blocos de Hospedagem (sincronizado com a Modelagem)</h2>
+    <div class="scroll"><table id="tab-hospedagens-dinamica"></table></div>
+    <p class="note">Critérios importantes (por conta das 10 malas): <b>elevador garantido</b>, quarto/apartamento para 4 pessoas, <b>perto da estação de trem</b>, cancelamento grátis. 19 noites no total (16/05 a 03/06).</p>
   </section>
 </main>
 
 <script>
-  // ---- DADOS: edite aqui ----
-  // chave = dia (AAAA-MM-DD); valor = texto da atividade.
-  const ATIVIDADES = {
+  // ---- CONFIGURAÇÃO DE CIDADES E TEMPOS DE TREM (Alta Velocidade Frecciarossa / Italo) ----
+  const CIDADES = {
+    roma:     { nome: "Roma",     icone: "🏛️", cor: "roma", baseHotel: "roma" },
+    vaticano: { nome: "Vaticano", icone: "🇻🇦", cor: "vaticano", baseHotel: "roma" },
+    florenca: { nome: "Florença", icone: "⚜️", cor: "florenca", baseHotel: "florenca" },
+    veneza:   { nome: "Veneza",   icone: "🛶", cor: "veneza", baseHotel: "veneza" },
+    milao:    { nome: "Milão",    icone: "🏰", cor: "milao", baseHotel: "milao" },
+    bolonha:  { nome: "Bolonha",  icone: "🍝", cor: "bolonha", baseHotel: "bolonha" },
+    viagem:   { nome: "Viagem",   icone: "✈️", cor: "viagem", baseHotel: "viagem" }
+  };
+
+  // Tempos médios de trem direto de alta velocidade entre as estações principais
+  const TRENS_TEMPO = {
+    "roma-florenca": "1h35 (trem direto)",
+    "florenca-roma": "1h35 (trem direto)",
+    "roma-bolonha": "2h15 (trem direto)",
+    "bolonha-roma": "2h15 (trem direto)",
+    "roma-milao": "3h10 (Frecciarossa/Italo direto)",
+    "milao-roma": "3h10 (Frecciarossa/Italo direto)",
+    "roma-veneza": "3h50 (trem direto)",
+    "veneza-roma": "3h50 (trem direto)",
+    "florenca-bolonha": "38 min (trem direto)",
+    "bolonha-florenca": "38 min (trem direto)",
+    "florenca-veneza": "2h15 (trem direto)",
+    "veneza-florenca": "2h15 (trem direto)",
+    "florenca-milao": "1h55 (trem direto)",
+    "milao-florenca": "1h55 (trem direto)",
+    "bolonha-veneza": "1h30 (trem direto)",
+    "veneza-bolonha": "1h30 (trem direto)",
+    "bolonha-milao": "1h05 (trem direto)",
+    "milao-bolonha": "1h05 (trem direto)",
+    "milao-veneza": "2h25 (Frecciarossa direto)",
+    "veneza-milao": "2h25 (Frecciarossa direto)"
+  };
+
+  // ---- PRESETS DE MODELAGEM (19 noites: 2027-05-16 a 2027-06-03) ----
+  const PRESETS = {
+    // Todas as cidades + Vaticano marcado nos dias do Vaticano
+    todas5: {
+      "2027-05-16": "roma", "2027-05-17": "roma", "2027-05-18": "vaticano", "2027-05-19": "vaticano", "2027-05-20": "roma",
+      "2027-05-21": "milao", "2027-05-22": "milao", "2027-05-23": "milao",
+      "2027-05-24": "veneza", "2027-05-25": "veneza", "2027-05-26": "veneza",
+      "2027-05-27": "bolonha", "2027-05-28": "bolonha",
+      "2027-05-29": "florenca", "2027-05-30": "florenca", "2027-05-31": "florenca", "2027-06-01": "florenca", "2027-06-02": "florenca",
+      "2027-06-03": "roma"
+    },
+    // O rascunho da planilha que você mandou (com Vaticano no dia 18)
+    rascunho: {
+      "2027-05-16": "roma", "2027-05-17": "roma", "2027-05-18": "vaticano", "2027-05-19": "roma", "2027-05-20": "roma",
+      "2027-05-21": "milao", "2027-05-22": "milao", "2027-05-23": "milao", "2027-05-24": "milao",
+      "2027-05-25": "veneza", "2027-05-26": "veneza", "2027-05-27": "veneza", "2027-05-28": "veneza",
+      "2027-05-29": "florenca", "2027-05-30": "florenca", "2027-05-31": "florenca", "2027-06-01": "florenca", "2027-06-02": "florenca",
+      "2027-06-03": "roma"
+    },
+    // Opção sem Milão, com Bolonha (Roma/Vaticano 6, Veneza 3, Bolonha 3, Florença 5, Roma 2)
+    bolonha: {
+      "2027-05-16": "roma", "2027-05-17": "roma", "2027-05-18": "vaticano", "2027-05-19": "vaticano", "2027-05-20": "roma", "2027-05-21": "roma",
+      "2027-05-22": "veneza", "2027-05-23": "veneza", "2027-05-24": "veneza",
+      "2027-05-25": "bolonha", "2027-05-26": "bolonha", "2027-05-27": "bolonha",
+      "2027-05-28": "florenca", "2027-05-29": "florenca", "2027-05-30": "florenca", "2027-05-31": "florenca", "2027-06-01": "florenca",
+      "2027-06-02": "roma", "2027-06-03": "roma"
+    }
+  };
+
+  // ---- DADOS DO CRONOGRAMA ----
+  const ATIVIDADES_BASE = {
     "2027-05-15": "Ida: POA 12:10 → GRU → Roma (LA 4679 + LA 8120)",
-    "2027-05-16": "Chegada em Roma 10:15 (FCO) · transfer · check-in",
-    "2027-06-03": "Trem Veneza → Roma · última noite perto do Termini",
+    "2027-05-16": "Chegada em Roma 10:15 (FCO) · transfer van · check-in e descanso",
+    "2027-05-17": "Roma Antiga: Coliseu, Fórum Romano, Palatino e Piazza Venezia",
+    "2027-05-18": "Museus Vaticanos, Capela Sistina e retirada do bilhete do Papa (Porta de Bronze)",
+    "2027-05-19": "Audiência Papal na Praça de São Pedro (09:00, Vinicius & Victoria) + Basílica + Centro Histórico",
+    "2027-05-20": "Galleria Borghese (manhã) + Trastevere",
+    "2027-06-03": "Retorno de trem para Roma · última noite perto do Termini",
     "2027-06-04": "Aeroporto às 10:00 · voo FCO 13:05 → GRU → POA",
     "2027-06-05": "Chegada em Porto Alegre 00:35"
   };
-  const DESTAQUES = ["2027-05-15", "2027-05-16", "2027-06-03", "2027-06-04", "2027-06-05"];
+
+  const AGENDA_BASE = {
+    "2027-05-15": [
+      ["08:40", "PREPARO", "Acordar e fechar malas"],
+      ["10:10", "AEROPORTO POA", "Chegar ao aeroporto Salgado Filho (POA) — Reserva WTFOOL"],
+      ["12:10", "VOO LA 4679", "Voo POA → GRU (Airbus A320 · duração 1h45)"],
+      ["13:55", "CONEXÃO GRU", "Chegada em Guarulhos (GRU) · conexão de 3h55"],
+      ["17:50", "VOO LA 8120", "Voo GRU → Roma FCO (Boeing B777-300 · duração 11h25)"]
+    ],
+    "2027-05-16": [
+      ["10:15", "POUSO FCO", "Pouso em Roma (FCO) — Domingo de Pentecostes"],
+      ["11:30", "TRANSFER VAN", "Van privativa (4 pessoas + 10 malas) até o hotel"],
+      ["14:00", "CHECK-IN", "Almoço tranquilo perto do hotel e descanso da viagem"]
+    ],
+    "2027-05-17": [
+      ["08:30", "COLISEU", "1º horário, ingresso nominal comprado 30 dias antes"],
+      ["10:30", "FÓRUM & PALATINO", "Percurso principal pela Via Sacra e mirante"],
+      ["13:00", "ALMOÇO & PAUSA", "Almoço sentado longo em Monti + descanso no hotel"],
+      ["17:00", "CAMPIDOGLIO", "Vista do Fórum e Piazza Venezia"]
+    ],
+    "2027-05-18": [
+      ["08:30", "MUSEUS VATICANOS", "Museus e Capela Sistina (entrada pela Viale Vaticano)"],
+      ["12:30", "ALMOÇO PRATI", "Almoço sentado em Prati (pausa obrigatória)"],
+      ["15:30", "BILHETE DO PAPA", "Retirar convites gratuitos na Porta de Bronze (colunata direita de São Pedro, 15h–19h)"],
+      ["16:00", "SÃO PEDRO", "Basílica de São Pedro (ou visitar na quarta após a Audiência)"]
+    ],
+    "2027-05-19": [
+      ["07:30", "FILA SÃO PEDRO", "Chegada na Praça de São Pedro (Vinicius & Victoria) para pegar bom lugar"],
+      ["09:00", "MISSA / PAPA", "Audiência Geral com o Papa na Praça de São Pedro"],
+      ["12:30", "ALMOÇO CENTRO", "Encontro com os pais para almoço no Centro Histórico"],
+      ["15:00", "PANTHEON & TREVI", "Pantheon (com hora marcada), Fontana di Trevi e Piazza Navona"]
+    ],
+    "2027-05-20": [
+      ["09:00", "BORGHESE", "Galleria Borghese (turno de 2h com reserva obrigatória)"],
+      ["13:00", "ALMOÇO & PAUSA", "Almoço e descanso à tarde"],
+      ["17:30", "TRASTEVERE", "Passeio leve e jantar em Trastevere (Santa Maria in Trastevere)"]
+    ],
+    "2027-06-03": [
+      ["", "TREM → ROMA", "Trem da última cidade → Roma Termini (se vier de Florença é só 1h35!)"],
+      ["", "HOTEL TERMINI", "Check-in em hotel colado na estação Roma Termini e jantar de despedida"]
+    ],
+    "2027-06-04": [
+      ["08:30", "CHECK-OUT", "Acordar e saída para o aeroporto"],
+      ["10:00", "AEROPORTO FCO", "Chegar ao aeroporto Fiumicino (FCO) — Reserva WTFOOL"],
+      ["13:05", "VOO LA 8121", "Voo FCO → GRU (Boeing B777-300 · duração 11h50)"],
+      ["19:55", "CONEXÃO GRU", "Chegada em Guarulhos (GRU) · conexão de 2h55"],
+      ["22:50", "VOO LA 4678", "Voo GRU → POA (Airbus A320 · duração 1h45)"]
+    ],
+    "2027-06-05": [
+      ["00:35", "CHEGADA POA", "Pouso em Porto Alegre"]
+    ]
+  };
+
+  const DESTAQUES = ["2027-05-15", "2027-05-16", "2027-05-18", "2027-05-19", "2027-06-03", "2027-06-04", "2027-06-05"];
+
+  // ---- TO-DO LIST INICIAL ----
+  const TODOS_INICIAIS = [
+    {
+      id: "papa-reserva",
+      data: "2027-05-19",
+      cat: "Vaticano · ~Mar/2027",
+      texto: "Reservar 2 bilhetes gratuitos da Audiência Papal (quarta 19/05) no site da Prefeitura da Casa Pontifícia (eventi.pontificalisdomus.va)",
+      done: false
+    },
+    {
+      id: "papa-retirada",
+      data: "2027-05-18",
+      cat: "Em Roma · Terça 15h–19h",
+      texto: "Retirar o bilhete físico da Audiência do Papa na Porta de Bronze (colunata direita da Praça de São Pedro) na terça 18/05 entre 15h e 19h (ou quarta 07h)",
+      done: false
+    },
+    {
+      id: "eticket-latam",
+      data: "2027-05-15",
+      cat: "Urgente · Voo",
+      texto: "Conferir e-ticket LATAM (nomes idênticos aos passaportes; mãe no passaporte BR para check-in e IT para fila UE)",
+      done: false
+    },
+    {
+      id: "fechar-roteiro",
+      data: "2027-05-21",
+      cat: "Planejamento",
+      texto: "Bater o martelo na divisão das 19 noites na aba 'Modelagem de Roteiro' para iniciar busca de hotéis com elevador",
+      done: false
+    },
+    {
+      id: "compra-trens",
+      data: "2027-06-03",
+      cat: "Fev/Mar 2027",
+      texto: "Comprar trens de alta velocidade direto na Trenitalia / Italo (quando abrirem os lotes promocionais)",
+      done: false
+    },
+    {
+      id: "reserva-vaticano",
+      data: "2027-05-18",
+      cat: "Mar/2027",
+      texto: "Comprar ingressos dos Museus Vaticanos + Capela Sistina para terça 18/05 pela manhã (tickets.museivaticani.va)",
+      done: false
+    },
+    {
+      id: "reserva-coliseu",
+      data: "2027-05-17",
+      cat: "30 dias antes (17/04/2027)",
+      texto: "Comprar 4 ingressos nominais do Coliseu/Fórum para 17/05 no 1º horário (ticketing.colosseo.it)",
+      done: false
+    },
+    {
+      id: "reserva-borghese",
+      data: "2027-05-20",
+      cat: "Mar/Abr 2027",
+      texto: "Reservar turno da manhã na Galleria Borghese (fechada às segundas)",
+      done: false
+    },
+    {
+      id: "transfer-fco",
+      data: "2027-05-16",
+      cat: "Abr/2027",
+      texto: "Agendar van privativa FCO → Hotel em Roma (4 adultos + 10 volumes não cabem em táxi comum)",
+      done: false
+    }
+  ];
 
   const ORCAMENTO = [
-    { item: "Passagem aérea (4 pessoas)", status: "pago", valor: 28239.68 },
-    { item: "Hospedagens (19 noites)", status: "a definir", valor: null },
-    { item: "Trens entre cidades", status: "a definir", valor: null },
-    { item: "Transfer FCO e aeroporto", status: "a definir", valor: null },
-    { item: "Passeios e ingressos", status: "a definir", valor: null },
-    { item: "Seguro viagem", status: "a definir", valor: null },
-    { item: "Alimentação e extras", status: "a definir", valor: null }
+    { id: "voos", item: "Passagem aérea LATAM Standard (4 pessoas)", status: "pago", valor: 28239.68 },
+    { id: "hosp", item: "Hospedagens (19 noites · 4 adultos)", status: "estimado (média Airbnb)", valor: null },
+    { id: "trens", item: "Trens de alta velocidade entre cidades", status: "a definir", valor: null },
+    { id: "transfer", item: "Transfer van FCO ⇄ hotel em Roma", status: "a definir", valor: null },
+    { id: "passeios", item: "Passeios e ingressos (Coliseu, Vaticano, Uffizi, etc.)", status: "a definir", valor: null },
+    { id: "seguro", item: "Seguro viagem (com cobertura de cancelamento)", status: "a definir", valor: null },
+    { id: "extras", item: "Alimentação e extras", status: "a definir", valor: null }
   ];
-  // ---- fim dos dados ----
 
+  // ---- AMOSTRAS INICIAIS DE HOSPEDAGEM (43 cotações reais do Airbnb p/ 4 adultos, 2+ quartos, 2+ banheiros em Mai/Jun 2027) ----
+  const HOSP_AMOSTRAS_INICIAIS = [
+    // ROMA (16–20/05/2027 · 4 noites)
+    { id: "h1", cidade: "roma", nome: "Kimera42 | Nova acomodação perto do centro", detalhe: "2 quartos · 4 camas · 2 banheiros · ★ 4,93 (Superhost) · Cancelamento grátis", fonte: "Airbnb (16–20/05)", noites: 4, total: 4910 },
+    { id: "h2", cidade: "roma", nome: "Caio Mario Suites - Caio (Prati / Vaticano)", detalhe: "1 quarto · 2 camas · 1 banheiro · ★ 4,94 (398 avaliações) · Cancelamento grátis", fonte: "Airbnb (16–20/05)", noites: 4, total: 5124 },
+    { id: "h3", cidade: "roma", nome: "Pino Mapa — San Giovanni / Esquilino", detalhe: "Amostra do mapa (4 hóspedes, 2+ quartos/banheiros)", fonte: "Airbnb Mapa", noites: 4, total: 4322 },
+    { id: "h4", cidade: "roma", nome: "Pino Mapa — Sul / Ostiense", detalhe: "Amostra do mapa (4 hóspedes)", fonte: "Airbnb Mapa", noites: 4, total: 4529 },
+    { id: "h5", cidade: "roma", nome: "Pino Mapa — Tuscolano / Sudeste", detalhe: "Amostra do mapa (4 hóspedes)", fonte: "Airbnb Mapa", noites: 4, total: 5040 },
+    { id: "h6", cidade: "roma", nome: "Pino Mapa — Norte / Salario (perto Villa Borghese)", detalhe: "Amostra do mapa (4 hóspedes)", fonte: "Airbnb Mapa", noites: 4, total: 6528 },
+    { id: "h7", cidade: "roma", nome: "Pino Mapa — Centro Histórico / Trevi-Barberini", detalhe: "Amostra do mapa (4 hóspedes)", fonte: "Airbnb Mapa", noites: 4, total: 6896 },
+    { id: "h8", cidade: "roma", nome: "Pino Mapa — Centro Histórico / Fontana di Trevi", detalhe: "Amostra do mapa (4 hóspedes)", fonte: "Airbnb Mapa", noites: 4, total: 6955 },
+    { id: "h9", cidade: "roma", nome: "Pino Mapa — Prati / Vaticano Oeste", detalhe: "Amostra do mapa (4 hóspedes)", fonte: "Airbnb Mapa", noites: 4, total: 7142 },
+    { id: "h10", cidade: "roma", nome: "Pino Mapa — Campo Marzio / Piazza Navona", detalhe: "Amostra do mapa (4 hóspedes)", fonte: "Airbnb Mapa", noites: 4, total: 8257 },
+    { id: "h11", cidade: "roma", nome: "Pino Mapa — Monti / Coliseu Leste", detalhe: "Amostra do mapa (4 hóspedes)", fonte: "Airbnb Mapa", noites: 4, total: 9102 },
+    { id: "h12", cidade: "roma", nome: "Pino Mapa — Coliseu / Fórum (vista direta)", detalhe: "Amostra topo de faixa no mapa", fonte: "Airbnb Mapa", noites: 4, total: 12369 },
+
+    // MILÃO (21–24/05/2027 · 3 noites · 2 quartos · 2 banheiros)
+    { id: "m1", cidade: "milao", nome: "Casaqua Moderno 2 quartos | Metrô e Duomo", detalhe: "2 quartos · 3 camas · 2 banheiros · ★ 5,0 (5)", fonte: "Airbnb (21–24/05)", noites: 3, total: 4199 },
+    { id: "m2", cidade: "milao", nome: "Casa Giulia Porta Venezia", detalhe: "2 quartos · 2 camas de casal · 2 banheiros · ★ 4,88 (179)", fonte: "Airbnb (21–24/05)", noites: 3, total: 4652 },
+    { id: "m3", cidade: "milao", nome: "Sempione Boutique Apartment", detalhe: "2 quartos · 2 camas · 2 banheiros · ★ 4,93 (89)", fonte: "Airbnb (21–24/05)", noites: 3, total: 5350 },
+    { id: "m4", cidade: "milao", nome: "Retiro de luxo no centro de Milão | A/C, Metrô", detalhe: "2 quartos · 3 camas · 2 banheiros · ★ 4,99 (176)", fonte: "Airbnb (21–24/05)", noites: 3, total: 5984 },
+    { id: "m5", cidade: "milao", nome: "Centro Storico — Localização tranquila c/ A/C", detalhe: "2 quartos · 3 camas · 2 banheiros · ★ 5,0 (66)", fonte: "Airbnb (21–24/05)", noites: 3, total: 6348 },
+    { id: "m6", cidade: "milao", nome: "Apartamento novo e luxuoso em Milão", detalhe: "2 quartos · 3 camas · 2 banheiros · ★ 4,98 (544)", fonte: "Airbnb (21–24/05)", noites: 3, total: 7175 },
+    { id: "m7", cidade: "milao", nome: "Easylife - Duomo Deluxe Apartments #4", detalhe: "2 quartos · 2 camas de casal · 2 banheiros · ★ 4,81 (36)", fonte: "Airbnb (21–24/05)", noites: 3, total: 7275 },
+    { id: "m8", cidade: "milao", nome: "Trilocale no centro de Milão, na Torre (Duomo)", detalhe: "2 quartos · 4 camas · 2 banheiros · ★ 4,92 (24)", fonte: "Airbnb (21–24/05)", noites: 3, total: 8488 },
+
+    // VENEZA (24–27/05/2027 · 3 noites · 2 quartos · 2 banheiros)
+    { id: "v1", cidade: "veneza", nome: "Ca' de l'Arco: perto da Praça de São Marcos (Castello)", detalhe: "2 quartos · 3 camas · 2 banheiros · ★ 4,98 (262)", fonte: "Airbnb (24–27/05)", noites: 3, total: 3879 },
+    { id: "v2", cidade: "veneza", nome: "Suíte Aconchegante Veneziana (San Marco)", detalhe: "2 quartos · 2 camas · 2 banheiros · ★ 5,0 (4)", fonte: "Airbnb (24–27/05)", noites: 3, total: 5163 },
+    { id: "v3", cidade: "veneza", nome: "Appartamento Azzurro — Dois banheiros (Cannaregio)", detalhe: "2 quartos · 2 camas queen · 2 banheiros · ★ 4,87 (283)", fonte: "Airbnb (24–27/05)", noites: 3, total: 5538 },
+    { id: "v4", cidade: "veneza", nome: "A Chave de Volta (Cannaregio)", detalhe: "2 quartos · 2 camas · 2 banheiros · ★ 4,95 (58)", fonte: "Airbnb (24–27/05)", noites: 3, total: 5680 },
+    { id: "v5", cidade: "veneza", nome: "Ca' Tiepolo - Casa dei Pittori", detalhe: "2 quartos · 3 camas · 2 banheiros · ★ 4,86 (37)", fonte: "Airbnb (24–27/05)", noites: 3, total: 6683 },
+    { id: "v6", cidade: "veneza", nome: "Ve.N.I.Ce. Cera Dimora San Vio (Dorsoduro)", detalhe: "2 quartos · 2 camas · 2 banheiros · ★ 4,93 (15)", fonte: "Airbnb (24–27/05)", noites: 3, total: 7215 },
+    { id: "v7", cidade: "veneza", nome: "Apartamento Ca' Fortuny em San Marco", detalhe: "2 quartos · 3 camas · 2 banheiros · ★ 4,86 (437)", fonte: "Airbnb (24–27/05)", noites: 3, total: 7336 },
+    { id: "v8", cidade: "veneza", nome: "Apartamento Ca' Rossini 1 em San Marco", detalhe: "2 quartos · 2 camas queen · 2 banheiros · ★ 4,88 (141)", fonte: "Airbnb (24–27/05)", noites: 3, total: 8164 },
+
+    // BOLONHA (27–29/05/2027 · 2 noites · 2 quartos · 2 banheiros)
+    { id: "b1", cidade: "bolonha", nome: "Bolonha é sempre uma boa ideia! - Apartamento", detalhe: "2 quartos · 2 camas de casal · 2 banheiros · ★ 4,98 (46)", fonte: "Airbnb (27–29/05)", noites: 2, total: 3300 },
+    { id: "b2", cidade: "bolonha", nome: "Masca53 Boutique Home, Experiência Moderna", detalhe: "2 quartos · 3 camas · 2 banheiros · ★ 4,97 (116)", fonte: "Airbnb (27–29/05)", noites: 2, total: 4050 },
+    { id: "b3", cidade: "bolonha", nome: "Suíte Montebello", detalhe: "2 quartos · 2 camas · 2 banheiros · ★ 4,90 (10)", fonte: "Airbnb (27–29/05)", noites: 2, total: 4322 },
+    { id: "b4", cidade: "bolonha", nome: "Casas de Arco ex Palazzo Lodovisi Tornelli séc. XVI", detalhe: "2 quartos · 4 camas · 2 banheiros · ★ 4,94 (112)", fonte: "Airbnb (27–29/05)", noites: 2, total: 4341 },
+    { id: "b5", cidade: "bolonha", nome: "Marconi 34 — 2 Quartos 2 Banheiros Perto da Estação", detalhe: "2 quartos · 2 camas de casal · 2 banheiros · ★ 4,99 (75)", fonte: "Airbnb (27–29/05)", noites: 2, total: 4956 },
+    { id: "b6", cidade: "bolonha", nome: "'Casa Adriana' no centro da cidade com garagem", detalhe: "2 quartos · 2 camas queen · 2 banheiros · ★ 4,98 (234)", fonte: "Airbnb (27–29/05)", noites: 2, total: 5150 },
+    { id: "b7", cidade: "bolonha", nome: "Marconi 34 Homes", detalhe: "2 quartos · 2 camas queen · 2 banheiros · ★ 4,98 (87)", fonte: "Airbnb (27–29/05)", noites: 2, total: 5790 },
+
+    // FLORENÇA (29/05–03/06/2027 · 5 noites · 2 quartos · 2 banheiros)
+    { id: "f1", cidade: "florenca", nome: "Apartamento na Rota 30", detalhe: "2 quartos · 2 camas · 2 banheiros · ★ 4,81 (121)", fonte: "Airbnb (29/05–03/06)", noites: 5, total: 6081 },
+    { id: "f2", cidade: "florenca", nome: "Apartamento Galliano", detalhe: "2 quartos · 3 camas · 2 banheiros · ★ 4,95 (131)", fonte: "Airbnb (29/05–03/06)", noites: 5, total: 6107 },
+    { id: "f3", cidade: "florenca", nome: "Apartamento com Jardim e Pérgola", detalhe: "2 quartos · 2 camas de casal · 2 banheiros · ★ 4,88 (148)", fonte: "Airbnb (29/05–03/06)", noites: 5, total: 7188 },
+    { id: "f4", cidade: "florenca", nome: "Apartamento elegante e iluminado Laura I", detalhe: "2 quartos · 2 camas queen · 2 banheiros · ★ 4,80 (40)", fonte: "Airbnb (29/05–03/06)", noites: 5, total: 8048 },
+    { id: "f5", cidade: "florenca", nome: "Dimora Donatello", detalhe: "2 quartos · 2 camas de casal · 2 banheiros · ★ 5,0 (44)", fonte: "Airbnb (29/05–03/06)", noites: 5, total: 8100 },
+    { id: "f6", cidade: "florenca", nome: "Casa aconchegante no coração de Florença", detalhe: "2 quartos · 2 camas de casal · 2 banheiros · ★ 4,89 (391)", fonte: "Airbnb (29/05–03/06)", noites: 5, total: 8540 },
+    { id: "f7", cidade: "florenca", nome: "[10 Min Duomo & David] Apto encantador central", detalhe: "2 quartos · 2 camas de casal · 2 banheiros · ★ 4,94 (301)", fonte: "Airbnb (29/05–03/06)", noites: 5, total: 8578 },
+    { id: "f8", cidade: "florenca", nome: "Apartamento aconchegante em Oltrarno (centro)", detalhe: "2 quartos · 2 camas de casal · 2 banheiros · ★ 4,95 (147)", fonte: "Airbnb (29/05–03/06)", noites: 5, total: 8831 }
+  ];
+
+  function getHospAmostras() {
+    try {
+      const s = JSON.parse(localStorage.getItem("italia-hosp-amostras-v2"));
+      if (Array.isArray(s) && s.length) return s;
+    } catch (e) {}
+    return HOSP_AMOSTRAS_INICIAIS;
+  }
+  function salvarHospAmostras(lista) {
+    try { localStorage.setItem("italia-hosp-amostras-v2", JSON.stringify(lista)); } catch (e) {}
+  }
+
+  // ---- HELPERS ----
   const brl = n => n.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
   const INICIO = new Date(2027, 4, 15), FIM = new Date(2027, 5, 5);
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const chave = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  const fmtCurta = k => { const [,m,d] = k.split("-"); return `${d}/${m}`; };
 
-  function dias() {
+  function diasViagem() {
     const lista = [];
     for (let d = new Date(INICIO); d <= FIM; d.setDate(d.getDate() + 1)) lista.push(new Date(d));
     return lista;
   }
-  const chave = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
-  function renderCronograma(el, soComAtividade) {
+  function noitesItalia() {
+    const lista = [];
+    for (let d = new Date(2027, 4, 16); d <= new Date(2027, 5, 3); d.setDate(d.getDate() + 1)) lista.push(chave(d));
+    return lista;
+  }
+
+  // Grade completa do calendário estilo planilha: de Dom 02/05/2027 a Sáb 05/06/2027 (5 semanas completas)
+  // Ou exatamente de Dom 25/04 a Sáb 05/06 (como na imagem que começa no Sab 1 de maio)
+  function diasGradeCalendario() {
+    const inicioGrade = new Date(2027, 3, 25); // Dom 25/04/2027 para 01/05 cair no Sábado da 1ª linha igual à imagem!
+    const fimGrade = new Date(2027, 5, 5);     // Sáb 05/06/2027
+    const lista = [];
+    for (let d = new Date(inicioGrade); d <= fimGrade; d.setDate(d.getDate() + 1)) {
+      lista.push(new Date(d));
+    }
+    return lista;
+  }
+
+  // ---- ESTADO PERSISTENTE (localStorage) ----
+  function getPlano() {
+    try {
+      const s = JSON.parse(localStorage.getItem("italia-plano-cidades-v2"));
+      if (s && typeof s === "object") return s;
+    } catch (e) {}
+    return { ...PRESETS.todas5 };
+  }
+  function salvarPlano(p) {
+    try { localStorage.setItem("italia-plano-cidades-v2", JSON.stringify(p)); } catch (e) {}
+  }
+
+  function getResumosCustom() {
+    try { return JSON.parse(localStorage.getItem("italia-resumos-dia")) || {}; } catch (e) { return {}; }
+  }
+  function salvarResumosCustom(o) {
+    try { localStorage.setItem("italia-resumos-dia", JSON.stringify(o)); } catch (e) {}
+  }
+
+  function extras() { try { return JSON.parse(localStorage.getItem("agenda-extra")) || {}; } catch (e) { return {}; } }
+  function salvarExtras(o) { try { localStorage.setItem("agenda-extra", JSON.stringify(o)); } catch (e) {} }
+
+  function getTodos() {
+    try {
+      const s = JSON.parse(localStorage.getItem("italia-todos-v1"));
+      if (Array.isArray(s) && s.length) return s;
+    } catch (e) {}
+    return TODOS_INICIAIS;
+  }
+  function salvarTodos(lista) {
+    try { localStorage.setItem("italia-todos-v1", JSON.stringify(lista)); } catch (e) {}
+  }
+
+  let plano = getPlano();
+  let pincelAtivo = "roma";
+  let arrastandoPintura = false;
+  const aberto = new Set(["2027-05-15", "2027-05-18", "2027-05-19"]);
+
+  // ---- CÁLCULO DE BLOCOS DE ESTADIA E TRECHOS ----
+  // Nota: "vaticano" usa a mesma base de hotel de "roma" para não contar como troca de hotel nem trem!
+  function calcularEstadias(mapaPlano) {
+    const noites = noitesItalia();
+    const blocos = [];
+    for (const k of noites) {
+      const raw = mapaPlano[k] || null;
+      if (!raw || !CIDADES[raw]) continue;
+      const cid = CIDADES[raw].baseHotel || raw;
+      const ult = blocos[blocos.length - 1];
+      if (ult && ult.cidade === cid && ehDiaSeguinte(ult.fimNoite, k)) {
+        ult.fimNoite = k;
+        ult.noites++;
+      } else {
+        blocos.push({ cidade: cid, inicioNoite: k, fimNoite: k, noites: 1 });
+      }
+    }
+    return blocos;
+  }
+
+  function ehDiaSeguinte(k1, k2) {
+    const [y1,m1,d1] = k1.split("-").map(Number);
+    const [y2,m2,d2] = k2.split("-").map(Number);
+    const dt1 = new Date(y1, m1 - 1, d1);
+    const dt2 = new Date(y2, m2 - 1, d2);
+    return Math.round((dt2 - dt1) / 86400000) === 1;
+  }
+
+  function somarUmDia(k) {
+    const [y,m,d] = k.split("-").map(Number);
+    const dt = new Date(y, m - 1, d + 1);
+    return chave(dt);
+  }
+
+  // ---- RENDERIZAÇÃO DE CALENDÁRIO VISUAL (Inicial e Cronograma) ----
+  function renderCalendarioVisual(containerId, modo) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    const dows = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+    let html = `<div class="cal-box"><div class="cal-title"><span>MAIO / JUNHO 2027</span><span class="sub">Clique em qualquer dia da viagem (15/05 a 05/06) para ver ou editar horários</span></div><div class="cal-grid">`;
+    for (const w of dows) html += `<div class="cal-dow">${w}</div>`;
+
+    const resumosCustom = getResumosCustom();
+    for (const d of diasGradeCalendario()) {
+      const k = chave(d);
+      const emAbril = d.getMonth() === 3;
+      const dentroViagem = d >= INICIO && d <= FIM;
+      if (emAbril) {
+        html += `<div class="cal-cell off"></div>`;
+        continue;
+      }
+      if (!dentroViagem) {
+        html += `<div class="cal-cell off"><div class="cal-num"><span>${d.getDate()}</span></div></div>`;
+        continue;
+      }
+
+      let cidKey = plano[k] || null;
+      if (k === "2027-05-15" || k === "2027-06-04" || k === "2027-06-05") cidKey = "viagem";
+      const cidInfo = cidKey ? CIDADES[cidKey] : null;
+      const resumo = resumosCustom[k] || ATIVIDADES_BASE[k] || "";
+      const qtdSlots = slots(k).length;
+      const mesTag = d.getDate() === 1 ? `<span class="m-tag">JUN</span>` : (d.getDate() === 15 && d.getMonth() === 4 ? `<span class="m-tag">MAI</span>` : "");
+
+      html += `<div class="cal-cell trip" data-jump="${k}">` +
+        `<div class="cal-num"><span>${d.getDate()}</span>${mesTag}</div>` +
+        (cidInfo ? `<div class="city-pill" data-city="${cidInfo.cor}"><span>${cidInfo.icone} ${cidInfo.nome}</span></div>` : `<div class="hint" style="font-size:.7rem;">Sem cidade</div>`) +
+        (resumo ? `<div class="cal-mini-note">${esc(resumo)}</div>` : "") +
+        (qtdSlots ? `<div class="cal-badge-count">${qtdSlots} horário(s)</div>` : "") +
+        `</div>`;
+    }
+    html += `</div></div>`;
+    el.innerHTML = html;
+
+    el.querySelectorAll("[data-jump]").forEach(cell => {
+      cell.addEventListener("click", () => {
+        const k = cell.dataset.jump;
+        irParaDiaNoCronograma(k);
+      });
+    });
+  }
+
+  // ---- RENDERIZAÇÃO DA ABA MODELAGEM DE ROTEIRO ----
+  function renderModelagem() {
+    const grid = document.getElementById("cal-modelagem");
+    const dows = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+    let html = "";
+    for (const w of dows) html += `<div class="cal-dow">${w}</div>`;
+
+    for (const d of diasGradeCalendario()) {
+      const k = chave(d);
+      const emAbril = d.getMonth() === 3;
+      const dentroViagem = d >= INICIO && d <= FIM;
+      if (emAbril) {
+        html += `<div class="cal-cell off"></div>`;
+        continue;
+      }
+      if (!dentroViagem) {
+        html += `<div class="cal-cell off"><div class="cal-num"><span>${d.getDate()}</span></div></div>`;
+        continue;
+      }
+
+      const ehFixoVoo = (k === "2027-05-15" || k === "2027-06-04" || k === "2027-06-05");
+      if (ehFixoVoo) {
+        const labelVoo = k === "2027-05-15" ? "✈️ VOO IDA (POA 12:10)" : (k === "2027-06-04" ? "✈️ VOO VOLTA (FCO 13:05)" : "🏠 Chegada POA 00:35");
+        html += `<div class="cal-cell mod-cell locked">` +
+          `<div class="cal-num"><span>${d.getDate()}</span><span class="m-tag">FIXO</span></div>` +
+          `<div class="city-pill" data-city="viagem">${labelVoo}</div>` +
+          `</div>`;
+        continue;
+      }
+
+      const cidKey = plano[k] || null;
+      const cidInfo = cidKey ? CIDADES[cidKey] : null;
+      const notaFixa = k === "2027-05-16" ? "Pouso FCO 10:15" : (k === "2027-05-19" ? "Papa 09:00 (Qua)" : (k === "2027-06-03" ? "Última noite (pré-voo)" : ""));
+
+      html += `<div class="cal-cell mod-cell" data-noite="${k}">` +
+        `<div class="cal-num"><span>${d.getDate()}/${String(d.getMonth()+1).padStart(2,"0")}</span>` +
+        (notaFixa ? `<span class="m-tag" style="color:var(--accent)">${notaFixa}</span>` : "") +
+        `</div>` +
+        (cidInfo
+          ? `<div class="city-pill" draggable="true" data-drag-city="${cidKey}" data-from-date="${k}" data-city="${cidInfo.cor}">` +
+            `<span>${cidInfo.icone} ${cidInfo.nome}</span>` +
+            `<button class="rm" data-clear="${k}" title="Limpar noite">✕</button>` +
+            `</div>`
+          : `<div class="hint" style="font-size:.73rem; margin-top:6px;">+ Arraste ou clique</div>`) +
+        `</div>`;
+    }
+    grid.innerHTML = html;
+
+    // Eventos das células da modelagem
+    grid.querySelectorAll("[data-noite]").forEach(cell => {
+      const k = cell.dataset.noite;
+
+      // Clique simples aplica o pincel selecionado (se não clicou em botão interno)
+      cell.addEventListener("mousedown", e => {
+        if (e.target.closest("[data-clear]") || e.target.closest("[data-extend]") || e.target.closest("[draggable='true']")) return;
+        arrastandoPintura = true;
+        aplicarCidadeNoDia(k, pincelAtivo);
+      });
+      cell.addEventListener("mouseenter", () => {
+        if (arrastandoPintura) aplicarCidadeNoDia(k, pincelAtivo);
+      });
+
+      // Drag & Drop HTML5
+      cell.addEventListener("dragover", e => {
+        e.preventDefault();
+        cell.classList.add("drag-over");
+      });
+      cell.addEventListener("dragleave", () => cell.classList.remove("drag-over"));
+      cell.addEventListener("drop", e => {
+        e.preventDefault();
+        cell.classList.remove("drag-over");
+        const city = e.dataTransfer.getData("text/city");
+        if (city) aplicarCidadeNoDia(k, city);
+      });
+    });
+
+    // Arrastar a pílula de dentro do próprio calendário para outros dias
+    grid.querySelectorAll("[data-drag-city]").forEach(pill => {
+      pill.addEventListener("dragstart", e => {
+        const c = pill.dataset.dragCity;
+        pincelAtivo = c;
+        atualizarBotoesPaleta();
+        e.dataTransfer.setData("text/city", c);
+      });
+    });
+
+    // Botão limpar noite
+    grid.querySelectorAll("[data-clear]").forEach(btn => {
+      btn.addEventListener("click", e => {
+        e.stopPropagation();
+        aplicarCidadeNoDia(btn.dataset.clear, "limpar");
+      });
+    });
+
+    renderResumoModelagem();
+  }
+
+  window.addEventListener("mouseup", () => { arrastandoPintura = false; });
+
+  function aplicarCidadeNoDia(k, city) {
+    if (!noitesItalia().includes(k)) return;
+    if (city === "limpar") {
+      delete plano[k];
+    } else {
+      plano[k] = city;
+    }
+    salvarPlano(plano);
+    renderTudoSincronizado();
+  }
+
+  function renderResumoModelagem() {
+    const noites = noitesItalia();
+    const contagem = { roma: 0, vaticano: 0, florenca: 0, veneza: 0, milao: 0, bolonha: 0 };
+    let preenchidas = 0;
+    for (const k of noites) {
+      const c = plano[k];
+      if (c && contagem[c] !== undefined) {
+        contagem[c]++;
+        preenchidas++;
+      }
+    }
+    document.getElementById("mod-total-noites").textContent = preenchidas;
+
+    const statsEl = document.getElementById("mod-stats-cidades");
+    let sHtml = "";
+    for (const [cid, qtd] of Object.entries(contagem)) {
+      const info = CIDADES[cid];
+      const diasCheios = Math.max(0, qtd - 1);
+      const subNota = cid === "vaticano"
+        ? `(dormindo em Roma)`
+        : (qtd > 0 ? `(~${qtd} dias / ${diasCheios} cheios)` : "(0 dias)");
+      sHtml += `<div class="stat-row" style="${qtd === 0 ? "opacity:.5" : ""}">` +
+        `<span><span class="city-pill" data-city="${info.cor}">${info.icone} ${info.nome}</span></span>` +
+        `<span><b>${qtd} dia(s)</b> <span class="hint">${subNota}</span></span>` +
+        `</div>`;
+    }
+    if (contagem.roma > 0 && contagem.vaticano > 0) {
+      sHtml += `<div class="stat-row" style="background:rgba(180,68,43,0.06); padding:6px 8px; border-radius:6px;">` +
+        `<span>🏨 <b>Total Hotel em Roma</b> (Roma + Vaticano)</span>` +
+        `<span><b>${contagem.roma + contagem.vaticano} noites</b></span>` +
+        `</div>`;
+    }
+    if (preenchidas < 19) {
+      sHtml += `<div class="stat-row" style="color:var(--accent)"><span>⚠️ Noites em aberto</span><span><b>${19 - preenchidas} noite(s)</b></span></div>`;
+    }
+    statsEl.innerHTML = sHtml || `<div class="hint">Nenhuma noite preenchida ainda.</div>`;
+
+    // Blocos e trechos de trem
+    const blocos = calcularEstadias(plano);
+    const trocas = Math.max(0, blocos.length - 1);
+    document.getElementById("mod-trocas").textContent = `${trocas} troca(s)`;
+
+    const trechosEl = document.getElementById("mod-trechos");
+    let tHtml = "";
+    for (let i = 0; i < blocos.length - 1; i++) {
+      const de = blocos[i], para = blocos[i + 1];
+      const dataTrem = para.inicioNoite;
+      const chaveTrem = `${de.cidade}-${para.cidade}`;
+      const tempo = TRENS_TEMPO[chaveTrem] || "consultar conexão";
+      tHtml += `<div class="leg-item">` +
+        `<div><b>${fmtCurta(dataTrem)}</b> · ${CIDADES[de.cidade].nome} → ${CIDADES[para.cidade].nome}</div>` +
+        `<div class="hint">🚄 ${tempo}</div>` +
+        `</div>`;
+    }
+    trechosEl.innerHTML = tHtml || `<div class="hint">Defina mais de uma cidade para ver os trechos de trem.</div>`;
+
+    // Alertas inteligentes para o roteiro (Foco no Pai, Papa, Noite 03/06, etc.)
+    const ehRomaOuVat = c => c === "roma" || c === "vaticano";
+    const alertasEl = document.getElementById("mod-alertas");
+    let aHtml = "";
+    if (!ehRomaOuVat(plano["2027-05-16"])) {
+      aHtml += `<div class="alert-box warn">⚠️ <b>Chegada 16/05:</b> O voo pousa em Roma (FCO) às 10:15 após 18h de viagem. É muito recomendado dormir em Roma na primeira noite.</div>`;
+    }
+    if (!ehRomaOuVat(plano["2027-06-03"])) {
+      aHtml += `<div class="alert-box warn">⚠️ <b>Véspera do voo (03/06):</b> O voo de volta sai de Roma às 13:05 do dia 04/06 (aeroporto às 10:00). Dormir em Roma em 03/06 evita risco de perder o voo por atraso/greve de trem.</div>`;
+    }
+    if (ehRomaOuVat(plano["2027-05-18"]) && ehRomaOuVat(plano["2027-05-19"])) {
+      aHtml += `<div class="alert-box good">✓ <b>Audiência do Papa garantida:</b> Vocês estão em Roma/Vaticano na terça 18/05 (para retirar o convite na Porta de Bronze) e na quarta 19/05 às 09:00 para a Audiência Geral na Praça de São Pedro.</div>`;
+    } else {
+      aHtml += `<div class="alert-box warn">⚠️ <b>Papa na quarta-feira:</b> A Audiência Geral é às quartas (19/05, 26/05 ou 02/06). Para ir em 19/05, mantenha Roma ou Vaticano nos dias 18 e 19/05.</div>`;
+    }
+    if (trocas > 4) {
+      aHtml += `<div class="alert-box warn">⚠️ <b>Logística de bagagem:</b> Há ${trocas} trocas de hotel com 10 malas. Se quiserem menos deslocamento com bagagem, 3 ou 4 trocas é o ponto ideal.</div>`;
+    } else if (preenchidas === 19) {
+      aHtml += `<div class="alert-box good">✓ <b>Todas as 19 noites distribuídas</b> com ${trocas} trocas de hotel.</div>`;
+    }
+    alertasEl.innerHTML = aHtml;
+
+    // Atualizar card da tela inicial e tabelas dinâmicas de Hospedagens e Passagens
+    const cidadesUnicas = [...new Set(blocos.map(b => CIDADES[b.cidade].nome))];
+    document.getElementById("card-cidades-count").textContent = cidadesUnicas.length || "—";
+    document.getElementById("card-cidades-sub").textContent = cidadesUnicas.join(" · ") || "Defina na aba Modelagem";
+
+    renderTabelasSincronizadas(blocos);
+  }
+
+  function renderTabelasSincronizadas(blocos) {
+    // Tabela de Hospedagens
+    const tabHosp = document.getElementById("tab-hospedagens-dinamica");
+    let hHtml = `<tr><th>Ordem</th><th>Cidade</th><th>Check-in → Check-out</th><th>Noites</th><th>Hotel</th><th>Status</th></tr>`;
+    blocos.forEach((b, idx) => {
+      const info = CIDADES[b.cidade];
+      const checkout = somarUmDia(b.fimNoite);
+      const obs = (b.cidade === "roma" && b.fimNoite === "2027-06-03") ? " <small class='hint'>(perto da estação Roma Termini)</small>" : "";
+      hHtml += `<tr>` +
+        `<td><b>#${idx + 1}</b></td>` +
+        `<td><span class="city-pill" data-city="${info.cor}">${info.icone} ${info.nome}</span>${obs}</td>` +
+        `<td>${fmtCurta(b.inicioNoite)} → ${fmtCurta(checkout)}</td>` +
+        `<td><b>${b.noites} noite(s)</b></td>` +
+        `<td>a escolher</td>` +
+        `<td>⏳ pendente</td>` +
+        `</tr>`;
+    });
+    tabHosp.innerHTML = hHtml;
+
+    // Tabela de Transportes na Itália (aba Passagens)
+    const tabTransp = document.getElementById("tab-transportes-dinamica");
+    let trHtml = `<tr><th>Data</th><th>Trecho</th><th>Tempo estimado</th><th>Observação</th><th>Status</th></tr>`;
+    trHtml += `<tr><td><b>16/05</b></td><td>Transfer Aeroporto FCO → Hotel em Roma</td><td>~45 min</td><td>Van para 4 adultos + 10 volumes</td><td>⏳ agendar</td></tr>`;
+    for (let i = 0; i < blocos.length - 1; i++) {
+      const de = blocos[i], para = blocos[i + 1];
+      const dataTrem = para.inicioNoite;
+      const tempo = TRENS_TEMPO[`${de.cidade}-${para.cidade}`] || "consultar";
+      trHtml += `<tr>` +
+        `<td><b>${fmtCurta(dataTrem)}</b></td>` +
+        `<td>Trem <b>${CIDADES[de.cidade].nome} → ${CIDADES[para.cidade].nome}</b></td>` +
+        `<td>🚄 ${tempo}</td>` +
+        `<td>Trenitalia (Frecciarossa) ou Italo</td>` +
+        `<td>⏳ abre ~fev/mar 2027</td>` +
+        `</tr>`;
+    }
+    trHtml += `<tr><td><b>04/06</b></td><td>Hotel em Roma → Aeroporto FCO (chegar 10:00)</td><td>~45 min</td><td>Van privativa ou Leonardo Express</td><td>⏳ agendar</td></tr>`;
+    tabTransp.innerHTML = trHtml;
+  }
+
+  // ---- CONTROLES DA PALETA E PRESETS ----
+  function atualizarBotoesPaleta() {
+    document.querySelectorAll("#palette-chips .drag-chip").forEach(ch => {
+      ch.classList.toggle("active-brush", ch.dataset.city === pincelAtivo);
+    });
+  }
+  document.querySelectorAll("#palette-chips .drag-chip").forEach(ch => {
+    ch.addEventListener("click", () => {
+      pincelAtivo = ch.dataset.city;
+      atualizarBotoesPaleta();
+    });
+    ch.addEventListener("dragstart", e => {
+      pincelAtivo = ch.dataset.city;
+      atualizarBotoesPaleta();
+      e.dataTransfer.setData("text/city", ch.dataset.city);
+    });
+  });
+  atualizarBotoesPaleta();
+
+  document.querySelectorAll("[data-preset]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const nome = btn.dataset.preset;
+      if (PRESETS[nome]) {
+        plano = { ...PRESETS[nome] };
+        salvarPlano(plano);
+        renderTudoSincronizado();
+      }
+    });
+  });
+
+  // ---- CRONOGRAMA DIA A DIA ----
+  function slots(k) {
+    const base = (AGENDA_BASE[k] || []).map(([h, tag, t]) => ({ h, tag: tag || "ATIVIDADE", t: t || "", fixo: true }));
+    const ext = (extras()[k] || []).map((item, i) => {
+      // Compatibilidade se tinha salvo só [h, t] ou [h, tag, t]
+      if (item.length === 2) return { h: item[0], tag: "EXTRA", t: item[1], fixo: false, i };
+      return { h: item[0], tag: item[1] || "EXTRA", t: item[2] || "", fixo: false, i };
+    });
+    const todos = base.concat(ext);
+    return todos.map((x, n) => ({ ...x, n })).sort((p, q) =>
+      (p.h || "99:99").localeCompare(q.h || "99:99") || p.n - q.n);
+  }
+
+  function renderCronograma(el, interativo) {
     let mes = -1, html = "";
-    for (const d of dias()) {
-      const k = chave(d), txt = ATIVIDADES[k];
-      if (soComAtividade && !txt) continue;
+    for (const d of diasViagem()) {
+      const k = chave(d);
+      const lista = slots(k);
+      const tagsDoDia = [...new Set(lista.map(x => x.tag).filter(Boolean))].join(" · ");
+      const txt = ATIVIDADES_BASE[k] || tagsDoDia;
+      if (!interativo && !txt) continue;
       if (d.getMonth() !== mes) {
         mes = d.getMonth();
         html += `<div class="month">${d.toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}</div>`;
       }
-      const cls = "day" + (txt ? "" : " empty") + (DESTAQUES.includes(k) ? " key" : "");
-      html += `<div class="${cls}"><div class="num">${d.getDate()}</div>` +
+      let cidKey = plano[k] || null;
+      if (k === "2027-05-15" || k === "2027-06-04" || k === "2027-06-05") cidKey = "viagem";
+      const cidInfo = cidKey ? CIDADES[cidKey] : null;
+      const badgeCidade = cidInfo
+        ? `<span class="city-pill" data-city="${cidInfo.cor}">${cidInfo.icone} ${cidInfo.nome}</span>`
+        : `<span class="hint">—</span>`;
+
+      const resumo = tagsDoDia || txt || "Dia livre / a detalhar";
+      const cls = "day" + (txt || lista.length ? "" : " empty");
+      const corDia = cidInfo ? cidInfo.cor : "viagem";
+      html += `<div class="daywrap${interativo ? " click" : ""}${aberto.has(k) ? " open" : ""}" id="day-${k}" data-k="${k}">` +
+        `<div class="${cls}">` +
+        `<div class="num">${d.getDate()}</div>` +
         `<div class="dow">${d.toLocaleDateString("pt-BR", { weekday: "long" })}</div>` +
-        `<div class="act">${txt || "—"}</div></div>`;
+        `<div>${badgeCidade}</div>` +
+        `<div class="act">${esc(resumo)}${interativo ? '<span class="chev">▶</span>' : ""}</div>` +
+        `</div>`;
+      if (interativo) {
+        html += `<div class="agenda">` +
+          lista.map(x =>
+            `<div class="slot">` +
+            `<span class="h">${x.h || "—"}</span>` +
+            `<span class="slot-tag" data-city="${corDia}" title="${esc(x.tag)}">${esc(x.tag)}</span>` +
+            `<span>${esc(x.t)}</span>` +
+            (x.fixo ? "<span></span>" : `<button class="x" data-del="${x.i}" title="Remover">✕</button>`) +
+            `</div>`).join("") +
+          (lista.length ? "" : `<div class="hint">Nenhum horário marcado neste dia ainda.</div>`) +
+          `<div class="addrow">` +
+          `<input type="time" class="in-h">` +
+          `<input type="text" class="in-tag" placeholder="TAG (ex: COLISEU)">` +
+          `<input type="text" class="in-t" placeholder="Detalhe da atividade...">` +
+          `<button class="btn sm" data-add>+ Horário</button></div></div>`;
+      }
+      html += `</div>`;
     }
     el.innerHTML = html;
   }
-  renderCronograma(document.getElementById("cron-inicial"), true);
-  renderCronograma(document.getElementById("cron-completo"), false);
-  document.getElementById("total-dias").textContent = dias().length;
 
-  const tab = document.getElementById("tab-orc");
-  let soma = 0;
-  for (const o of ORCAMENTO) {
-    if (o.valor) soma += o.valor;
-    tab.insertAdjacentHTML("beforeend",
-      `<tr><td>${o.item}</td><td>${o.status}</td><td style="text-align:right">${o.valor ? brl(o.valor) : "—"}</td></tr>`);
+  const cronCompleto = document.getElementById("cron-completo");
+  cronCompleto.addEventListener("click", e => {
+    const wrap = e.target.closest(".daywrap");
+    if (!wrap) return;
+    const k = wrap.dataset.k;
+    if (e.target.closest("[data-add]")) {
+      const h = wrap.querySelector(".in-h").value;
+      const tag = (wrap.querySelector(".in-tag").value.trim() || "ATIVIDADE").toUpperCase();
+      const t = wrap.querySelector(".in-t").value.trim();
+      if (!t && !tag) return;
+      const ex = extras(); (ex[k] = ex[k] || []).push([h, tag, t]); salvarExtras(ex);
+      aberto.add(k); renderTudoSincronizado(); return;
+    }
+    const del = e.target.closest("[data-del]");
+    if (del) {
+      const ex = extras(); ex[k].splice(Number(del.dataset.del), 1); salvarExtras(ex);
+      renderTudoSincronizado(); return;
+    }
+    if (e.target.closest(".agenda")) return;
+    aberto.has(k) ? aberto.delete(k) : aberto.add(k);
+    wrap.classList.toggle("open");
+  });
+
+  document.getElementById("btn-expand-all").addEventListener("click", () => {
+    diasViagem().forEach(d => aberto.add(chave(d)));
+    renderCronograma(cronCompleto, true);
+  });
+  document.getElementById("btn-collapse-all").addEventListener("click", () => {
+    aberto.clear();
+    renderCronograma(cronCompleto, true);
+  });
+
+  function renderGradeHorariaExcel() {
+    const container = document.getElementById("excel-horarios");
+    if (!container) return;
+    const dias = diasViagem();
+    // Horas de 06:00 até 23:00 + 00:00 (meia-noite / madrugada)
+    const horas = [];
+    for (let h = 6; h <= 23; h++) horas.push(String(h).padStart(2, "0") + ":00");
+    horas.push("00:00");
+
+    // Pré-indexar atividades de cada dia por hora cheia (6..23 e 0)
+    const mapaDiaHora = {};
+    const semHoraPorDia = {};
+    for (const d of dias) {
+      const k = chave(d);
+      mapaDiaHora[k] = {};
+      semHoraPorDia[k] = [];
+      for (const item of slots(k)) {
+        if (!item.h) {
+          semHoraPorDia[k].push(item);
+          continue;
+        }
+        const hh = parseInt(item.h.split(":")[0], 10);
+        const bucket = (hh >= 6 && hh <= 23) ? String(hh).padStart(2, "0") + ":00" : "00:00";
+        (mapaDiaHora[k][bucket] = mapaDiaHora[k][bucket] || []).push(item);
+      }
+    }
+
+    let html = `<table class="excel-grid"><thead><tr><th class="col-hora">HORA</th>`;
+    for (const d of dias) {
+      const k = chave(d);
+      const dowCurto = d.toLocaleDateString("pt-BR", { weekday: "short" }).replace(".", "");
+      html += `<th data-jump-day="${k}" style="cursor:pointer;" title="Ir para ${fmtCurta(k)}">` +
+        `<div style="font-size:.82rem; font-weight:800;">${fmtCurta(k)}</div>` +
+        `<div style="font-size:.68rem; color:var(--muted); text-transform:capitalize;">${dowCurto}</div>` +
+        `</th>`;
+    }
+    html += `</tr><tr class="row-city"><th class="col-hora">CIDADE</th>`;
+    for (const d of dias) {
+      const k = chave(d);
+      let cidKey = plano[k] || null;
+      if (k === "2027-05-15" || k === "2027-06-04" || k === "2027-06-05") cidKey = "viagem";
+      const info = cidKey ? CIDADES[cidKey] : null;
+      html += `<th>` +
+        (info
+          ? `<span class="city-pill" data-city="${info.cor}" style="width:100%; justify-content:center; padding:2px 3px; font-size:.68rem;">${info.icone} ${info.nome}</span>`
+          : `<span class="hint">—</span>`) +
+        `</th>`;
+    }
+    html += `</tr></thead><tbody>`;
+
+    // Linha opcional para itens "A definir" (sem horário fixo) se houver algum
+    const temSemHora = dias.some(d => semHoraPorDia[chave(d)].length > 0);
+    if (temSemHora) {
+      html += `<tr><td class="col-hora" style="font-size:.72rem;">A def.</td>`;
+      for (const d of dias) {
+        const k = chave(d);
+        let cidKey = plano[k] || null;
+        if (k === "2027-05-15" || k === "2027-06-04" || k === "2027-06-05") cidKey = "viagem";
+        const corDia = (cidKey && CIDADES[cidKey]) ? CIDADES[cidKey].cor : "viagem";
+        const itens = semHoraPorDia[k];
+        html += `<td class="excel-cell" data-excel-cell="${k}" data-excel-hour="">` +
+          itens.map(x => `<div class="excel-item" data-city="${corDia}">${esc(x.t || x.tag)}</div>`).join("") +
+          `</td>`;
+      }
+      html += `</tr>`;
+    }
+
+    for (const hLabel of horas) {
+      const ehAlmoco = (hLabel === "12:00");
+      html += `<tr class="${ehAlmoco ? "row-lunch" : ""}"><td class="col-hora">${hLabel}</td>`;
+      for (const d of dias) {
+        const k = chave(d);
+        let cidKey = plano[k] || null;
+        if (k === "2027-05-15" || k === "2027-06-04" || k === "2027-06-05") cidKey = "viagem";
+        const corDia = (cidKey && CIDADES[cidKey]) ? CIDADES[cidKey].cor : "viagem";
+        const itens = mapaDiaHora[k][hLabel] || [];
+        html += `<td class="excel-cell" data-excel-cell="${k}" data-excel-hour="${hLabel}" title="Clique para ver/adicionar em ${fmtCurta(k)} às ${hLabel}">` +
+          itens.map(x =>
+            `<div class="excel-item" data-city="${corDia}">${esc(x.t || x.tag)}</div>`
+          ).join("") +
+          `</td>`;
+      }
+      html += `</tr>`;
+    }
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+
+    // Clicar em cabeçalho ou célula: se clicar na célula vazia ou com item, permite adicionar rápido ou ir pro dia
+    container.querySelectorAll("[data-jump-day]").forEach(th => {
+      th.addEventListener("click", () => irParaDiaNoCronograma(th.dataset.jumpDay));
+    });
+    container.querySelectorAll("[data-excel-cell]").forEach(td => {
+      td.addEventListener("click", () => {
+        const k = td.dataset.excelCell;
+        const hr = td.dataset.excelHour;
+        irParaDiaNoCronograma(k, hr);
+      });
+    });
   }
-  tab.insertAdjacentHTML("beforeend",
-    `<tr><td><b>Total conhecido</b></td><td></td><td style="text-align:right"><b>${brl(soma)}</b></td></tr>`);
 
-  const botoes = document.querySelectorAll("nav button");
-  function abrir(nome) {
+  function irParaDiaNoCronograma(k, horaPreencher) {
+    abrir("cronograma");
+    aberto.add(k);
+    renderCronograma(cronCompleto, true);
+    const alvo = document.getElementById(`day-${k}`);
+    if (alvo) {
+      alvo.scrollIntoView({ behavior: "smooth", block: "center" });
+      alvo.classList.add("flash");
+      if (horaPreencher) {
+        const inH = alvo.querySelector(".in-h");
+        const inTag = alvo.querySelector(".in-tag");
+        if (inH) inH.value = horaPreencher;
+        if (inTag) setTimeout(() => inTag.focus(), 350);
+      }
+      setTimeout(() => alvo.classList.remove("flash"), 1800);
+    }
+  }
+
+  // ---- TO-DO LIST LATERAL ----
+  function renderTodos() {
+    const lista = getTodos();
+    const el = document.getElementById("todo-list");
+    const pendentes = lista.filter(x => !x.done).length;
+    document.getElementById("todo-counter").textContent = `${pendentes} pendente(s)`;
+
+    const ordenada = [...lista].sort((a, b) => (a.done - b.done) || (a.data || "9999").localeCompare(b.data || "9999"));
+    el.innerHTML = ordenada.map(item => `
+      <div class="todo-item${item.done ? " done" : ""}" data-id="${esc(item.id)}">
+        <input type="checkbox" ${item.done ? "checked" : ""} data-toggle-todo="${esc(item.id)}">
+        <div>
+          <div class="todo-meta">
+            ${item.data ? `<span class="todo-date-badge" data-goto-day="${esc(item.data)}" title="Ver dia ${fmtCurta(item.data)} no cronograma">📅 Dia ${fmtCurta(item.data)}</span>` : ""}
+            ${item.cat ? `<span class="todo-cat">${esc(item.cat)}</span>` : ""}
+          </div>
+          <div class="todo-title">${esc(item.texto)}</div>
+        </div>
+        <button class="todo-del" data-del-todo="${esc(item.id)}" title="Remover tarefa">✕</button>
+      </div>
+    `).join("");
+  }
+
+  document.getElementById("todo-btn-add").addEventListener("click", () => {
+    const dt = document.getElementById("todo-in-date").value;
+    const txt = document.getElementById("todo-in-text").value.trim();
+    if (!txt) return;
+    const lista = getTodos();
+    lista.push({ id: "t-" + Date.now(), data: dt || "2027-05-16", cat: "Tarefa", texto: txt, done: false });
+    salvarTodos(lista);
+    document.getElementById("todo-in-text").value = "";
+    renderTodos();
+  });
+
+  document.getElementById("todo-list").addEventListener("click", e => {
+    const toggle = e.target.closest("[data-toggle-todo]");
+    if (toggle) {
+      const id = toggle.dataset.toggleTodo;
+      const lista = getTodos();
+      const it = lista.find(x => x.id === id);
+      if (it) { it.done = !it.done; salvarTodos(lista); renderTodos(); }
+      return;
+    }
+    const del = e.target.closest("[data-del-todo]");
+    if (del) {
+      const id = del.dataset.delTodo;
+      const lista = getTodos().filter(x => x.id !== id);
+      salvarTodos(lista);
+      renderTodos();
+      return;
+    }
+    const gotoDay = e.target.closest("[data-goto-day]");
+    if (gotoDay) {
+      irParaDiaNoCronograma(gotoDay.dataset.gotoDay);
+    }
+  });
+
+  // ---- MODELAGEM DE HOSPEDAGEM & ORÇAMENTO DINÂMICO ----
+  function calcularMediasHospedagem() {
+    const amostras = getHospAmostras();
+    const porCidade = {};
+    for (const c of ["roma", "florenca", "veneza", "milao", "bolonha"]) {
+      const itens = amostras.filter(x => x.cidade === c && x.noites > 0 && x.total > 0);
+      if (!itens.length) {
+        porCidade[c] = { qtd: 0, mediaDiaria: 0, minDiaria: 0, maxDiaria: 0, medianaDiaria: 0, itens: [] };
+        continue;
+      }
+      const diarias = itens.map(x => x.total / x.noites).sort((a, b) => a - b);
+      const somaD = diarias.reduce((acc, v) => acc + v, 0);
+      const mid = Math.floor(diarias.length / 2);
+      const mediana = diarias.length % 2 !== 0 ? diarias[mid] : (diarias[mid - 1] + diarias[mid]) / 2;
+      porCidade[c] = {
+        qtd: itens.length,
+        mediaDiaria: somaD / diarias.length,
+        medianaDiaria: mediana,
+        minDiaria: diarias[0],
+        maxDiaria: diarias[diarias.length - 1],
+        itens
+      };
+    }
+    return porCidade;
+  }
+
+  function renderModelagemHospedagem() {
+    const stats = calcularMediasHospedagem();
+    const todasAmostras = getHospAmostras();
+    const todasDiarias = todasAmostras.filter(x => x.noites > 0).map(x => x.total / x.noites);
+    const mediaGeralDiaria = todasDiarias.length
+      ? todasDiarias.reduce((a, b) => a + b, 0) / todasDiarias.length
+      : 0;
+
+    // Quantas noites em cada cidade base segundo a Modelagem de Roteiro
+    const noitesBase = { roma: 0, florenca: 0, veneza: 0, milao: 0, bolonha: 0 };
+    for (const k of noitesItalia()) {
+      const raw = plano[k];
+      if (!raw || !CIDADES[raw]) continue;
+      const base = CIDADES[raw].baseHotel || raw;
+      if (noitesBase[base] !== undefined) noitesBase[base]++;
+    }
+
+    // Projeção pelas 19 noites: usa a média da própria cidade; se a cidade ainda não tiver amostra, usa a média geral como fallback
+    let totalProjetadoMedia = 0;
+    let totalProjetadoEcon = 0;
+    let pHtml = "";
+    for (const cid of ["roma", "milao", "veneza", "bolonha", "florenca"]) {
+      const n = noitesBase[cid];
+      if (n === 0 && stats[cid].qtd === 0) continue;
+      const info = CIDADES[cid];
+      const temAmostra = stats[cid].qtd > 0;
+      const diariaUsada = temAmostra ? stats[cid].mediaDiaria : mediaGeralDiaria;
+      const diariaMinUsada = temAmostra ? stats[cid].minDiaria : (todasDiarias.length ? Math.min(...todasDiarias) : 0);
+      const subtotal = n * diariaUsada;
+      const subtotalMin = n * diariaMinUsada;
+      totalProjetadoMedia += subtotal;
+      totalProjetadoEcon += subtotalMin;
+
+      pHtml += `<div class="stat-row" style="flex-direction:column; align-items:stretch; gap:4px; padding:10px 0;">` +
+        `<div style="display:flex; justify-content:space-between; align-items:center;">` +
+        `<span class="city-pill" data-city="${info.cor}">${info.icone} ${info.nome} (${n} noites)</span>` +
+        `<b>R$ ${brl(subtotal)}</b>` +
+        `</div>` +
+        `<div style="display:flex; justify-content:space-between; font-size:.77rem; color:var(--muted);">` +
+        `<span>${temAmostra ? `${stats[cid].qtd} amostra(s) · média R$ ${brl(diariaUsada)}/noite` : `Sem amostra ainda (usando média R$ ${brl(diariaUsada)}/noite)`}</span>` +
+        `<span>Faixa min: R$ ${brl(subtotalMin)}</span>` +
+        `</div>` +
+        `</div>`;
+    }
+
+    pHtml += `<div style="margin-top:12px; padding:12px; border-radius:8px; background:var(--accent-soft); color:var(--ink);">` +
+      `<div style="display:flex; justify-content:space-between; font-size:1rem;"><span><b>Total Estimado (Média 19 noites)</b></span><b>R$ ${brl(totalProjetadoMedia)}</b></div>` +
+      `<div style="display:flex; justify-content:space-between; font-size:.82rem; color:var(--muted); margin-top:4px;"><span>Por pessoa (÷ 4 adultos):</span><b>R$ ${brl(totalProjetadoMedia / 4)}</b></div>` +
+      `<div style="display:flex; justify-content:space-between; font-size:.82rem; color:var(--ok); margin-top:4px;"><span>Cenário econômico (melhores achados):</span><b>R$ ${brl(totalProjetadoEcon)} (R$ ${brl(totalProjetadoEcon / 4)}/pessoa)</b></div>` +
+      `</div>`;
+
+    const projEl = document.getElementById("hosp-projecao-tabela");
+    if (projEl) projEl.innerHTML = pHtml;
+
+    // KPIs no topo da aba Modelagem de Hospedagem
+    const kpisEl = document.getElementById("hosp-kpis");
+    if (kpisEl) {
+      kpisEl.innerHTML = `
+        <div class="card">
+          <div class="label">Amostras Coletadas no Airbnb</div>
+          <div class="big">${todasAmostras.length} opções</div>
+          <div class="sub">Roma, Milão, Veneza, Bolonha e Florença (4 adultos · 2 quartos · 2 banheiros)</div>
+        </div>
+        <div class="card">
+          <div class="label">Diária Média Geral (5 cidades)</div>
+          <div class="big">R$ ${brl(mediaGeralDiaria)}<small style="font-size:.9rem; font-weight:400;">/noite</small></div>
+          <div class="sub">~R$ ${brl(mediaGeralDiaria / 4)} por pessoa/noite</div>
+        </div>
+        <div class="card">
+          <div class="label">Projeção 19 Noites (Pela Média)</div>
+          <div class="big" style="color:var(--accent)">R$ ${brl(totalProjetadoMedia)}</div>
+          <div class="sub">R$ ${brl(totalProjetadoMedia / 4)} por pessoa (4 adultos)</div>
+        </div>
+        <div class="card">
+          <div class="label">Projeção 19 Noites (Melhores Achados)</div>
+          <div class="big" style="color:var(--ok)">R$ ${brl(totalProjetadoEcon)}</div>
+          <div class="sub">Escolhendo os melhores custo-benefício de cada cidade (R$ ${brl(totalProjetadoEcon / 4)}/pessoa)</div>
+        </div>
+      `;
+    }
+
+    // Lista detalhada de amostras agrupadas por cidade
+    const listaEl = document.getElementById("hosp-lista-cidades");
+    if (listaEl) {
+      let lHtml = "";
+      for (const cid of ["roma", "florenca", "veneza", "milao", "bolonha"]) {
+        const st = stats[cid];
+        if (!st.qtd) continue;
+        const info = CIDADES[cid];
+        lHtml += `<div style="margin-bottom:22px;">` +
+          `<h3><span class="city-pill" data-city="${info.cor}">${info.icone} ${info.nome}</span> · ${st.qtd} cotação(ões) · Média: R$ ${brl(st.mediaDiaria)}/noite (R$ ${brl(st.mediaDiaria / 4)}/pessoa)</h3>` +
+          `<div class="scroll"><table>` +
+          `<tr><th>Acomodação / Região</th><th>Fonte &amp; Período</th><th style="text-align:right">Total Cotado</th><th style="text-align:right">Valor / Noite</th><th style="text-align:right">Por Pessoa / Noite</th><th></th></tr>` +
+          st.itens.map(item => {
+            const diaria = item.total / item.noites;
+            return `<tr>` +
+              `<td><b>${esc(item.nome)}</b>${item.detalhe ? `<br><small class="hint">${esc(item.detalhe)}</small>` : ""}</td>` +
+              `<td>${esc(item.fonte)}<br><small class="hint">${item.noites} noite(s)</small></td>` +
+              `<td style="text-align:right"><b>R$ ${brl(item.total)}</b></td>` +
+              `<td style="text-align:right">R$ ${brl(diaria)}</td>` +
+              `<td style="text-align:right" class="hint">R$ ${brl(diaria / 4)}</td>` +
+              `<td style="text-align:right"><button class="todo-del" data-del-hosp="${esc(item.id)}" title="Remover cotação">✕</button></td>` +
+              `</tr>`;
+          }).join("") +
+          `</table></div></div>`;
+      }
+      listaEl.innerHTML = lHtml || `<div class="hint">Nenhuma cotação adicionada ainda.</div>`;
+    }
+
+    // Atualizar tabela de Orçamento com a projeção de hospedagem
+    renderOrcamento(totalProjetadoMedia);
+  }
+
+  document.getElementById("btn-add-hosp").addEventListener("click", () => {
+    const cidade = document.getElementById("in-hosp-city").value;
+    const nome = document.getElementById("in-hosp-nome").value.trim() || "Cotação avulsa";
+    const fonte = document.getElementById("in-hosp-fonte").value.trim() || "Airbnb";
+    const noites = parseInt(document.getElementById("in-hosp-noites").value, 10) || 4;
+    const total = parseFloat(document.getElementById("in-hosp-total").value);
+    if (!total || total <= 0) return;
+    const lista = getHospAmostras();
+    lista.unshift({
+      id: "h-" + Date.now(),
+      cidade,
+      nome,
+      detalhe: "Adicionado manualmente",
+      fonte,
+      noites,
+      total
+    });
+    salvarHospAmostras(lista);
+    document.getElementById("in-hosp-nome").value = "";
+    document.getElementById("in-hosp-total").value = "";
+    renderModelagemHospedagem();
+  });
+
+  document.getElementById("hosp-lista-cidades").addEventListener("click", e => {
+    const btn = e.target.closest("[data-del-hosp]");
+    if (!btn) return;
+    const id = btn.dataset.delHosp;
+    const lista = getHospAmostras().filter(x => x.id !== id);
+    salvarHospAmostras(lista);
+    renderModelagemHospedagem();
+  });
+
+  // ---- ORÇAMENTO ----
+  function renderOrcamento(valorHospEstimado) {
+    const tab = document.getElementById("tab-orc");
+    if (!tab) return;
+    let html = `<tr><th>Item</th><th>Status</th><th style="text-align:right">Valor Total (4 pessoas)</th><th style="text-align:right">Por Pessoa (÷ 4)</th></tr>`;
+    let somaPago = 0;
+    let somaTotal = 0;
+    for (const o of ORCAMENTO) {
+      const val = (o.id === "hosp" && valorHospEstimado) ? valorHospEstimado : o.valor;
+      if (o.status === "pago" && val) somaPago += val;
+      if (val) somaTotal += val;
+      html += `<tr>` +
+        `<td>${o.item}</td>` +
+        `<td>${o.status === "pago" ? `<span class="tag ok">✓ pago</span>` : `<span class="tag">${o.status}</span>`}</td>` +
+        `<td style="text-align:right">${val ? "R$ " + brl(val) : "—"}</td>` +
+        `<td style="text-align:right" class="hint">${val ? "R$ " + brl(val / 4) : "—"}</td>` +
+        `</tr>`;
+    }
+    html += `<tr><td><b>Total já pago (Passagens)</b></td><td></td><td style="text-align:right"><b>R$ ${brl(somaPago)}</b></td><td style="text-align:right"><b>R$ ${brl(somaPago / 4)}</b></td></tr>`;
+    html += `<tr style="background:var(--accent-soft);"><td><b>Total Projetado (Pago + Hospedagem Estimada)</b></td><td></td><td style="text-align:right"><b>R$ ${brl(somaTotal)}</b></td><td style="text-align:right"><b>R$ ${brl(somaTotal / 4)}</b></td></tr>`;
+    tab.innerHTML = html;
+  }
+
+  // ---- NAVEGAÇÃO ENTRE ABAS COM HISTÓRICO (VOLTAR / AVANÇAR + POSIÇÃO DE SCROLL) ----
+  const botoes = document.querySelectorAll('nav button[role="tab"]');
+  const btnBack = document.getElementById("btn-nav-back");
+  const btnFwd = document.getElementById("btn-nav-fwd");
+  const histNav = [{ tab: "inicial", scrollY: 0 }];
+  let histIdx = 0;
+
+  function atualizarBotoesHist() {
+    btnBack.disabled = histIdx <= 0;
+    btnFwd.disabled = histIdx >= histNav.length - 1;
+  }
+
+  function abaAtual() {
+    const b = document.querySelector('nav button[role="tab"][aria-selected="true"]');
+    return b ? b.dataset.tab : "inicial";
+  }
+
+  function abrir(nome, opcoes = {}) {
+    const atual = abaAtual();
+    // Salva a altura do scroll de onde o usuário estava antes de trocar de aba
+    if (histNav[histIdx]) {
+      histNav[histIdx].scrollY = window.scrollY;
+    }
+    if (!opcoes.viaHistorico && nome !== atual) {
+      histNav.splice(histIdx + 1);
+      histNav.push({ tab: nome, scrollY: 0 });
+      histIdx = histNav.length - 1;
+    }
     botoes.forEach(b => b.setAttribute("aria-selected", b.dataset.tab === nome));
     document.querySelectorAll("main section").forEach(s => s.hidden = s.id !== nome);
+    atualizarBotoesHist();
     try { localStorage.setItem("aba", nome); } catch (e) {}
   }
+
+  btnBack.addEventListener("click", () => {
+    if (histIdx <= 0) return;
+    histNav[histIdx].scrollY = window.scrollY;
+    histIdx--;
+    const alvo = histNav[histIdx];
+    abrir(alvo.tab, { viaHistorico: true });
+    setTimeout(() => window.scrollTo({ top: alvo.scrollY || 0, behavior: "smooth" }), 20);
+  });
+
+  btnFwd.addEventListener("click", () => {
+    if (histIdx >= histNav.length - 1) return;
+    histNav[histIdx].scrollY = window.scrollY;
+    histIdx++;
+    const alvo = histNav[histIdx];
+    abrir(alvo.tab, { viaHistorico: true });
+    setTimeout(() => window.scrollTo({ top: alvo.scrollY || 0, behavior: "smooth" }), 20);
+  });
+
   botoes.forEach(b => b.addEventListener("click", () => abrir(b.dataset.tab)));
-  try { const a = localStorage.getItem("aba"); if (a) abrir(a); } catch (e) {}
+
+  function renderTudoSincronizado() {
+    renderModelagem();
+    renderGradeHorariaExcel();
+    renderModelagemHospedagem();
+    renderCalendarioVisual("cal-inicial", "inicial");
+    renderCronograma(document.getElementById("cron-inicial"), false);
+    renderCronograma(cronCompleto, true);
+    renderTodos();
+    document.getElementById("total-dias").textContent = diasViagem().length;
+  }
+
+  renderTudoSincronizado();
+  try {
+    const a = localStorage.getItem("aba");
+    if (a) {
+      histNav[0] = { tab: a, scrollY: 0 };
+      abrir(a, { viaHistorico: true });
+    }
+  } catch (e) {}
+
+  // ---- AUTENTICAÇÃO POR HASH SHA-256 (Web Crypto API) ----
+  // Hash SHA-256 da senha da família (com salt "italia-2027:") para não expor a senha em texto puro
+  const PASS_HASH_HEX = "6462302275ab6546a1a091d957c7062e766b1f437dabe7ba888cde5ab91c8571";
+  const AUTH_STORAGE_KEY = "italia-auth-token-v1";
+
+  async function sha256Hex(str) {
+    const buf = new TextEncoder().encode("italia-2027:" + str);
+    const hashBuf = await crypto.subtle.digest("SHA-256", buf);
+    return Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, "0")).join("");
+  }
+
+  function desbloquearPagina() {
+    document.body.classList.remove("locked");
+    document.getElementById("auth-overlay").hidden = true;
+  }
+
+  function bloquearPagina() {
+    try { localStorage.removeItem(AUTH_STORAGE_KEY); } catch (e) {}
+    document.body.classList.add("locked");
+    const ov = document.getElementById("auth-overlay");
+    ov.hidden = false;
+    const inp = document.getElementById("auth-pass");
+    inp.value = "";
+    setTimeout(() => inp.focus(), 50);
+  }
+
+  try {
+    if (localStorage.getItem(AUTH_STORAGE_KEY) === PASS_HASH_HEX) {
+      desbloquearPagina();
+    }
+  } catch (e) {}
+
+  document.getElementById("auth-form").addEventListener("submit", async e => {
+    e.preventDefault();
+    const val = document.getElementById("auth-pass").value.trim();
+    const h = await sha256Hex(val);
+    if (h === PASS_HASH_HEX) {
+      try { localStorage.setItem(AUTH_STORAGE_KEY, h); } catch (err) {}
+      document.getElementById("auth-err").style.display = "none";
+      desbloquearPagina();
+    } else {
+      document.getElementById("auth-err").style.display = "block";
+    }
+  });
+
+  document.getElementById("btn-logout").addEventListener("click", bloquearPagina);
 </script>
 </body>
 </html>
